@@ -69,7 +69,7 @@ fun AddPatientScreen(
         containerColor = paperColors.background,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Registration", fontWeight = FontWeight.Bold) },
+                title = { Text("Add Patient", fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = paperColors.textPrimary)
@@ -91,7 +91,7 @@ fun AddPatientScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Text(
-                text = "PATIENT IDENTITY",
+                text = "Patient Identity",
                 style = MaterialTheme.typography.labelLarge,
                 color = paperColors.accent,
                 fontWeight = FontWeight.Bold
@@ -135,7 +135,7 @@ fun AddPatientScreen(
                 onValueChange = { name = it },
                 label = { Text("Full Name") },
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium, // 16dp radius
+                shape = MaterialTheme.shapes.large,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = paperColors.accent,
                     unfocusedBorderColor = paperColors.outline,
@@ -174,7 +174,7 @@ fun AddPatientScreen(
                         label = { Text("Sex") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showSexMenu) },
                         modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.large,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = paperColors.accent,
                             unfocusedBorderColor = paperColors.outline,
@@ -202,7 +202,7 @@ fun AddPatientScreen(
             }
 
             Text(
-                text = "CLINICAL CONTEXT",
+                text = "Clinical Context",
                 style = MaterialTheme.typography.labelLarge,
                 color = paperColors.accent,
                 fontWeight = FontWeight.Bold
@@ -247,7 +247,7 @@ fun AddPatientScreen(
                     contentColor = Color.White
                 )
             ) {
-                Text("SAVE RECORD", fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                Text("Save Record", fontWeight = FontWeight.SemiBold)
             }
         }
     }

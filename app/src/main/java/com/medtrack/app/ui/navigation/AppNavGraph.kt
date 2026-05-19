@@ -30,8 +30,8 @@ fun AppNavGraph(navController: NavHostController) {
                 onPatientClick = { patientId ->
                     navController.navigate(Screen.PatientProfile.createRoute(patientId))
                 },
-                onFollowUpClick = { patientId ->
-                    navController.navigate(Screen.PatientProfile.createRoute(patientId))
+                onFollowUpClick = { visitId ->
+                    navController.navigate(Screen.VisitDetail.createRoute(visitId))
                 }
             )
         }
@@ -91,8 +91,8 @@ fun AppNavGraph(navController: NavHostController) {
         
         composable(Screen.FollowUps.route) {
             FollowUpScreen(
-                onFollowUpClick = { patientId ->
-                    navController.navigate(Screen.PatientProfile.createRoute(patientId))
+                onFollowUpClick = { visitId ->
+                    navController.navigate(Screen.VisitDetail.createRoute(visitId))
                 }
             )
         }

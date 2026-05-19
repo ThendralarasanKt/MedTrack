@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.medtrack.app.data.db.model.PatientListItem
 import com.medtrack.app.ui.theme.LocalPaperColors
@@ -45,7 +44,7 @@ fun PatientCard(
         colors = CardDefaults.cardColors(containerColor = paperColors.surface),
         shape = MaterialTheme.shapes.medium,
         border = BorderStroke(1.dp, paperColors.outline),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
@@ -64,10 +63,7 @@ fun PatientCard(
                     Text(
                         text = patient.name,
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontSize = 19.sp,
-                            color = paperColors.textPrimary
-                        ),
+                        style = MaterialTheme.typography.titleMedium.copy(color = paperColors.textPrimary),
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
                     )
@@ -79,7 +75,7 @@ fun PatientCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${patient.age}y • ${patient.sex}  •  ID #${patient.id}",
+                    text = "${patient.age}y • ${patient.sex} • ID #${patient.id}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = paperColors.textSecondary
                 )

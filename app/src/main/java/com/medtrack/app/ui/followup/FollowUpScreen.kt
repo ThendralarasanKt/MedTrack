@@ -108,7 +108,7 @@ fun FollowUpScreen(
                         items(group.items, key = { it.id }) { followUp ->
                             FollowUpCard(
                                 followUp = followUp,
-                                onClick = { onFollowUpClick(followUp.patientId) },
+                                onClick = { onFollowUpClick(followUp.visitId) },
                                 onEditClick = { editingFollowUp = followUp },
                                 onDoneClick = { viewModel.markDone(followUp) }
                             )

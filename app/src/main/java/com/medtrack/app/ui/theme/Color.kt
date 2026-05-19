@@ -3,14 +3,14 @@ package com.medtrack.app.ui.theme
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-// Classic Paper Reading Aesthetic Palette
-val PaperBackground = Color(0xFFF8F5E6)
-val PaperSurface = Color(0xFFFDFBF7)
-val PaperTextPrimary = Color(0xFF292421)
-val PaperTextSecondary = Color(0xFF6D645D)
-val PaperAccent = Color(0xFF8B5E3C)
-val PaperOutline = Color(0xFFD8CDB6)
-val PaperHighlight = Color(0xFFFFD54F)
+// Clean clinical palette inspired by native iOS utility apps.
+val PaperBackground = Color(0xFFF5F5F7)
+val PaperSurface = Color(0xFFFFFFFF)
+val PaperTextPrimary = Color(0xFF1D1D1F)
+val PaperTextSecondary = Color(0xFF6E6E73)
+val PaperAccent = Color(0xFF007AFF)
+val PaperOutline = Color(0xFFE5E5EA)
+val PaperHighlight = Color(0xFFEAF2FF)
 
 // Custom Palette for CompositionLocal
 data class PaperCustomColors(

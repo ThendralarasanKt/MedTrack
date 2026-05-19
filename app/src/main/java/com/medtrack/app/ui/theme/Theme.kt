@@ -59,9 +59,9 @@ private val PaperColorScheme = lightColorScheme(
 
 private val PaperShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(16.dp),
+    small = RoundedCornerShape(10.dp),
+    medium = RoundedCornerShape(14.dp),
+    large = RoundedCornerShape(14.dp),
     extraLarge = RoundedCornerShape(16.dp)
 )
 

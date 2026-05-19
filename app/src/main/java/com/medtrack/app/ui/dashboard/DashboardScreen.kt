@@ -1,6 +1,5 @@
 package com.medtrack.app.ui.dashboard
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,15 +12,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.medtrack.app.R
 import com.medtrack.app.ui.common.components.PatientCard
 import com.medtrack.app.ui.followup.FollowUpScreen
 import com.medtrack.app.ui.theme.LocalPaperColors
+
+private val HeaderMessages = listOf(
+    "Have a beautiful day.",
+    "Are you ready to save a life today?",
+    "A calm mind heals faster.",
+    "Care is your superpower.",
+    "Every patient remembers kindness.",
+    "Your focus changes outcomes.",
+    "Healing starts with listening.",
+    "Small decisions create big recoveries.",
+    "Compassion is clinical strength.",
+    "You bring hope into every room.",
+    "Steady hands, strong heart.",
+    "Warriors do not always wear armor, sometimes they wear white coats.",
+    "Today is another chance to heal.",
+    "Your presence is medicine too.",
+    "One more patient, one more difference."
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,25 +49,23 @@ fun DashboardScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     var selectedTab by remember { mutableIntStateOf(0) }
     val paperColors = LocalPaperColors.current
+    val headerMessage = remember { HeaderMessages.random() }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        // Using the logo image provided by user
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_logo),
-                            contentDescription = "MedTrack Logo",
-                            modifier = Modifier.size(32.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+                    Column {
                         Text(
-                            "MedTrack", 
-                            fontWeight = FontWeight.Bold,
+                            text = "Hey Doctor,",
                             style = MaterialTheme.typography.titleLarge,
-                            letterSpacing = 1.sp
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = headerMessage,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
@@ -67,9 +79,9 @@ fun DashboardScreen(
             if (selectedTab == 0) {
                 FloatingActionButton(
                     onClick = onAddPatientClick,
-                    containerColor = MaterialTheme.colorScheme.primary, // #8B5E3C Accent
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = Color.White,
-                    shape = MaterialTheme.shapes.medium // 16dp radius
+                    shape = MaterialTheme.shapes.large
                 ) {
                     Icon(Icons.Default.Add, contentDescription = "Add Patient")
                 }
@@ -104,10 +116,9 @@ fun DashboardScreen(
                 return@Column
             }
 
-            // Patients Header
             Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
                 Text(
-                    text = "Medical Records",
+                    text = "Patient Records",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -118,7 +129,6 @@ fun DashboardScreen(
                 )
             }
 
-            // Search Bar with Paper Aesthetics
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.onSearchQueryChange(it) },
@@ -127,7 +137,7 @@ fun DashboardScreen(
                     .padding(horizontal = 20.dp, vertical = 8.dp),
                 placeholder = { Text("Search by name or ID") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = paperColors.accent) },
-                shape = MaterialTheme.shapes.medium, // 16dp radius
+                shape = MaterialTheme.shapes.large,
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = paperColors.surface,

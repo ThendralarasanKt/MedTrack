@@ -74,7 +74,7 @@ fun PatientProfileScreen(
                 onClick = { onNewVisitClick(patientId) },
                 containerColor = paperColors.accent,
                 contentColor = Color.White,
-                shape = MaterialTheme.shapes.medium // 16dp radius
+                shape = MaterialTheme.shapes.large
             ) {
                 Icon(Icons.Default.Add, contentDescription = "New Visit")
             }
@@ -334,11 +334,10 @@ fun PaperInfoSection(title: String, content: @Composable () -> Unit) {
     val paperColors = LocalPaperColors.current
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = title.uppercase(),
+            text = title,
             style = MaterialTheme.typography.labelMedium,
             color = paperColors.accent,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
+            fontWeight = FontWeight.SemiBold
         )
         Surface(
             modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),

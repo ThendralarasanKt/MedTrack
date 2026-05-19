@@ -25,10 +25,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -173,7 +171,7 @@ fun VisitDetailScreen(
                 action = {
                     Button(
                         onClick = { reportPicker.launch(arrayOf("image/*", "application/pdf")) },
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.large
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null)
                         Spacer(Modifier.width(6.dp))
@@ -200,11 +198,11 @@ fun VisitDetailScreen(
 
 @Composable
 private fun VisitSummary(visit: VisitEntity) {
-    ElevatedCard(
+    Surface(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
-        shape = MaterialTheme.shapes.medium
+        color = MaterialTheme.colorScheme.surface,
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -290,9 +288,8 @@ private fun NoteText(value: String?, fallback: String) {
 private fun PrescriptionRow(index: Int, medicine: MedicineEntity) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.background,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        shape = MaterialTheme.shapes.medium
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+        shape = MaterialTheme.shapes.small
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -333,9 +330,8 @@ private fun TaskStatusRow(task: TaskEntity, onToggle: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onToggle),
-        color = MaterialTheme.colorScheme.background,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        shape = MaterialTheme.shapes.medium
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+        shape = MaterialTheme.shapes.small
     ) {
         Row(
             modifier = Modifier.padding(start = 12.dp, top = 10.dp, end = 8.dp, bottom = 10.dp),
@@ -377,9 +373,8 @@ private fun TaskStatusRow(task: TaskEntity, onToggle: () -> Unit) {
 private fun ReportRow(report: ReportEntity, onOpen: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.background,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        shape = MaterialTheme.shapes.medium
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+        shape = MaterialTheme.shapes.small
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
