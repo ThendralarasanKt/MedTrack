@@ -43,6 +43,7 @@ fun DashboardScreen(
     onAddPatientClick: () -> Unit,
     onPatientClick: (Int) -> Unit,
     onFollowUpClick: (Int) -> Unit,
+    onAssistantClick: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val patients by viewModel.patients.collectAsState()
@@ -72,7 +73,12 @@ fun DashboardScreen(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.onBackground
-                )
+                ),
+                actions = {
+                    TextButton(onClick = onAssistantClick) {
+                        Text("AI")
+                    }
+                }
             )
         },
         floatingActionButton = {

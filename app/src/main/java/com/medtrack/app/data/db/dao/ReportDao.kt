@@ -12,6 +12,9 @@ interface ReportDao {
     @Query("SELECT * FROM reports WHERE visitId = :visitId")
     fun getReportsForVisit(visitId: Int): Flow<List<ReportEntity>>
 
+    @Query("SELECT * FROM reports WHERE visitId = :visitId ORDER BY uploadedAt DESC, id DESC")
+    suspend fun getReportsForVisitNow(visitId: Int): List<ReportEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertReport(report: ReportEntity)
 

@@ -9,6 +9,7 @@ package com.medtrack.app.ui.navigation
 sealed class Screen(val route: String) {
     object Dashboard : Screen("dashboard")
     object AddPatient : Screen("add_patient")
+    object Assistant : Screen("assistant")
     
     object PatientProfile : Screen("patient_profile/{patientId}?tab={tab}") {
         fun createRoute(patientId: Int, tab: Int = 0) = "patient_profile/$patientId?tab=$tab"

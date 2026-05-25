@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.medtrack.app.ui.assistant.AssistantScreen
 import com.medtrack.app.ui.dashboard.DashboardScreen
 import com.medtrack.app.ui.followup.FollowUpScreen
 import com.medtrack.app.ui.patient.AddPatientScreen
@@ -32,7 +33,16 @@ fun AppNavGraph(navController: NavHostController) {
                 },
                 onFollowUpClick = { visitId ->
                     navController.navigate(Screen.VisitDetail.createRoute(visitId))
+                },
+                onAssistantClick = {
+                    navController.navigate(Screen.Assistant.route)
                 }
+            )
+        }
+
+        composable(Screen.Assistant.route) {
+            AssistantScreen(
+                onBack = { navController.popBackStack() }
             )
         }
         

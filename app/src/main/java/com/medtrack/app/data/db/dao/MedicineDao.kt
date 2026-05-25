@@ -12,6 +12,9 @@ interface MedicineDao {
     @Query("SELECT * FROM medicines WHERE visitId = :visitId")
     fun getMedicinesForVisit(visitId: Int): Flow<List<MedicineEntity>>
 
+    @Query("SELECT * FROM medicines WHERE visitId = :visitId ORDER BY id ASC")
+    suspend fun getMedicinesForVisitNow(visitId: Int): List<MedicineEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMedicine(medicine: MedicineEntity)
 

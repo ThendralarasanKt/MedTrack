@@ -62,6 +62,31 @@ interface FollowUpDao {
 
     @Query(
         """
+        SELECT 
+            follow_ups.id AS id,
+            follow_ups.patientId AS patientId,
+            follow_ups.visitId AS visitId,
+            patients.name AS patientName,
+            visits.roomNo AS roomNo,
+            follow_ups.scheduledDate AS scheduledDate,
+            follow_ups.scheduledTime AS scheduledTime,
+            follow_ups.reason AS reason,
+            follow_ups.isNotified AS isNotified,
+            follow_ups.status AS status,
+            follow_ups.notifiedAt AS notifiedAt,
+            follow_ups.completedAt AS completedAt
+        FROM follow_ups
+        INNER JOIN patients ON patients.id = follow_ups.patientId
+        INNER JOIN visits ON visits.id = follow_ups.visitId
+        WHERE follow_ups.visitId = :visitId
+        ORDER BY follow_ups.scheduledDate DESC, follow_ups.scheduledTime DESC, follow_ups.id DESC
+        LIMIT 1
+        """
+    )
+    suspend fun getLatestFollowUpForVisit(visitId: Int): FollowUpWithPatient?
+
+    @Query(
+        """
         SELECT * FROM follow_ups
         WHERE status = 'PENDING'
         ORDER BY scheduledDate ASC, scheduledTime ASC

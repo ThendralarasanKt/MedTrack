@@ -2,6 +2,7 @@ package com.medtrack.app.data.db.dao
 
 import androidx.room.*
 import com.medtrack.app.data.db.entity.VisitEntity
+import com.medtrack.app.data.db.model.PatientVisitContext
 import com.medtrack.app.data.db.model.VisitHistorySummary
 import kotlinx.coroutines.flow.Flow
 
@@ -36,6 +37,70 @@ interface VisitDao {
 
     @Query("SELECT * FROM visits WHERE id = :visitId")
     suspend fun getVisitById(visitId: Int): VisitEntity?
+
+    @Query(
+        """
+        SELECT
+            patients.id AS patientId,
+            patients.name AS patientName,
+            patients.age AS age,
+            patients.sex AS sex,
+            patients.contact AS contact,
+            patients.address AS address,
+            patients.medHistory AS medHistory,
+            visits.id AS visitId,
+            visits.visitDate AS visitDate,
+            visits.visitTime AS visitTime,
+            visits.roomNo AS roomNo,
+            visits.symptoms AS symptoms,
+            visits.diagnosis AS diagnosis,
+            visits.progressNotes AS progressNotes
+        FROM visits
+        INNER JOIN patients ON patients.id = visits.patientId
+        WHERE LOWER(TRIM(patients.name)) = LOWER(TRIM(:patientName))
+            AND LOWER(TRIM(visits.roomNo)) = LOWER(TRIM(:roomNo))
+        ORDER BY visits.visitDate DESC, visits.visitTime DESC, visits.id DESC
+        """
+    )
+    suspend fun findVisitContextsByPatientNameAndRoom(
+        patientName: String,
+        roomNo: String
+    ): List<PatientVisitContext>
+
+    @Query(
+        """
+        SELECT
+            patients.id AS patientId,
+            patients.name AS patientName,
+            patients.age AS age,
+            patients.sex AS sex,
+            patients.contact AS contact,
+            patients.address AS address,
+            patients.medHistory AS medHistory,
+            visits.id AS visitId,
+            visits.visitDate AS visitDate,
+            visits.visitTime AS visitTime,
+            visits.roomNo AS roomNo,
+            visits.symptoms AS symptoms,
+            visits.diagnosis AS diagnosis,
+            visits.progressNotes AS progressNotes
+        FROM visits
+        INNER JOIN patients ON patients.id = visits.patientId
+        WHERE LOWER(TRIM(patients.name)) = LOWER(TRIM(:patientName))
+        ORDER BY visits.visitDate DESC, visits.visitTime DESC, visits.id DESC
+        LIMIT 1
+        """
+    )
+    suspend fun findLatestVisitContextByPatientName(patientName: String): PatientVisitContext?
+
+    @Query(
+        """
+        UPDATE visits
+        SET roomNo = :newRoomNo
+        WHERE id = :visitId
+        """
+    )
+    suspend fun updateVisitRoomNo(visitId: Int, newRoomNo: String): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVisit(visit: VisitEntity): Long
