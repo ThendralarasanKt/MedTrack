@@ -93,6 +93,7 @@ interface VisitDao {
     )
     suspend fun findLatestVisitContextByPatientName(patientName: String): PatientVisitContext?
 
+    //Query that execute When the change request from the Ai
     @Query(
         """
         UPDATE visits

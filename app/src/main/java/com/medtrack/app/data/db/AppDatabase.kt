@@ -21,7 +21,7 @@ import com.medtrack.app.data.db.entity.*
         ReportEntity::class,
         FollowUpEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(DateConverters::class)

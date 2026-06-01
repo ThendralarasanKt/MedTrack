@@ -27,7 +27,8 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="MedTrack"
-            android:theme="@style/Theme.DoctorsCRM">
+            android:theme="@style/Theme.DoctorsCRM"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

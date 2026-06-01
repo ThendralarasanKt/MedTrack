@@ -25,5 +25,7 @@ data class PatientEntity(
     val address: String = "",
     val medHistory: String = "",
     val photoPath: String = "",
-    val createdAt: String = LocalDateTime.now().toString()
+    val createdAt: String = LocalDateTime.now().toString(),
+    val isDischarged: Boolean = false,
+    val dischargedAt: String? = null
 )

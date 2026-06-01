@@ -28,9 +28,9 @@ class DashboardViewModel @Inject constructor(
         .debounce(300)
         .flatMapLatest { query ->
             if (query.isEmpty()) {
-                repository.getPatientListItems()
+                repository.getActivePatientListItems()
             } else {
-                repository.searchPatientListItems(query)
+                repository.searchActivePatientListItems(query)
             }
         }
         .stateIn(

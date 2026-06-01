@@ -28,6 +28,7 @@ class FakeLocalLlmEngine @Inject constructor() : LocalLlmEngine {
         }
     }
 
+
     private fun extractUserRequest(prompt: String): String {
         val marker = "User request:"
         val markerIndex = prompt.lastIndexOf(marker, ignoreCase = true)

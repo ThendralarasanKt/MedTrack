@@ -224,11 +224,11 @@ class LocalMcpHttpServer @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "LocalMcpHttpServer"
-        const val HOST = "127.0.0.1"
-        const val PORT = 8765
-        const val PATH = "/mcp"
-    }
+            private const val TAG = "LocalMcpHttpServer"
+            const val HOST = "127.0.0.1"
+            const val PORT = 8765
+            const val PATH = "/mcp"
+        }
 }
 
 data class HttpRequest(

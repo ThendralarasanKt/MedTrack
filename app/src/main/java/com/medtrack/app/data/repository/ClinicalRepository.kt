@@ -7,6 +7,7 @@ import com.medtrack.app.data.db.model.PatientVisitContext
 import com.medtrack.app.data.db.model.FollowUpWithPatient
 import com.medtrack.app.data.db.model.VisitHistorySummary
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -48,7 +49,7 @@ class ClinicalRepository @Inject constructor(
     fun getTasksForVisit(visitId: Int): Flow<List<TaskEntity>> = 
         taskDao.getTasksForVisit(visitId)
 
-    suspend fun insertTask(task: TaskEntity) = taskDao.insertTask(task)
+    suspend fun insertTask(task: TaskEntity): Long = taskDao.insertTask(task)
     
     suspend fun updateTaskStatus(taskId: Int, isDone: Boolean) {
         val status = if (isDone) "DONE" else "PENDING"
@@ -59,8 +60,14 @@ class ClinicalRepository @Inject constructor(
     fun getMedicinesForVisit(visitId: Int): Flow<List<MedicineEntity>> = 
         medicineDao.getMedicinesForVisit(visitId)
 
-    suspend fun insertMedicine(medicine: MedicineEntity) = 
+    suspend fun insertMedicine(medicine: MedicineEntity): Long =
         medicineDao.insertMedicine(medicine)
+
+    suspend fun updateMedicine(medicine: MedicineEntity) =
+        medicineDao.updateMedicine(medicine)
+
+    suspend fun deleteMedicine(medicine: MedicineEntity) =
+        medicineDao.deleteMedicine(medicine)
 
     suspend fun getMedicinesForVisitNow(visitId: Int): List<MedicineEntity> =
         medicineDao.getMedicinesForVisitNow(visitId)
@@ -79,12 +86,21 @@ class ClinicalRepository @Inject constructor(
 
     fun getAllFollowUpsWithPatients(): Flow<List<FollowUpWithPatient>> =
         followUpDao.getAllFollowUpsWithPatients()
+
+    suspend fun getAllFollowUpsWithPatientsNow(): List<FollowUpWithPatient> =
+        followUpDao.getAllFollowUpsWithPatients().first()
     
     suspend fun insertFollowUp(followUp: FollowUpEntity) = followUpDao.insertFollowUp(followUp)
 
     suspend fun updateFollowUp(followUp: FollowUpEntity) = followUpDao.updateFollowUp(followUp)
 
     suspend fun getFollowUpById(id: Int): FollowUpEntity? = followUpDao.getFollowUpById(id)
+
+    suspend fun getFollowUpWithPatientById(id: Int): FollowUpWithPatient? =
+        followUpDao.getFollowUpWithPatientById(id)
+
+    suspend fun getPendingFollowUps(): List<FollowUpEntity> =
+        followUpDao.getPendingFollowUps()
 
     suspend fun getLatestFollowUpForVisit(visitId: Int): FollowUpWithPatient? =
         followUpDao.getLatestFollowUpForVisit(visitId)

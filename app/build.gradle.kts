@@ -9,6 +9,7 @@ plugins {
 android {
     namespace = "com.medtrack.app"
     compileSdk = 35
+    ndkVersion = "30.0.14904198"
 
     defaultConfig {
         applicationId = "com.medtrack.app"
@@ -18,6 +19,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters += listOf("arm64-v8a")
+        }
     }
 
     buildTypes {
@@ -38,6 +42,12 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "4.1.2"
+        }
     }
 }
 

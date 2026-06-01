@@ -17,12 +17,15 @@ class PatientRepository @Inject constructor(
     fun getAllPatients(): Flow<List<PatientEntity>> = patientDao.getAllPatients()
 
     fun getPatientListItems(): Flow<List<PatientListItem>> = patientDao.getPatientListItems()
+    fun getActivePatientListItems(): Flow<List<PatientListItem>> = patientDao.getActivePatientListItems()
 
     fun searchPatients(searchQuery: String): Flow<List<PatientEntity>> =
         patientDao.searchPatients(searchQuery)
 
     fun searchPatientListItems(searchQuery: String): Flow<List<PatientListItem>> =
         patientDao.searchPatientListItems(searchQuery)
+    fun searchActivePatientListItems(searchQuery: String): Flow<List<PatientListItem>> =
+        patientDao.searchActivePatientListItems(searchQuery)
 
     suspend fun getPatientById(id: Int): PatientEntity? = patientDao.getPatientById(id)
 
@@ -31,4 +34,8 @@ class PatientRepository @Inject constructor(
     suspend fun updatePatient(patient: PatientEntity) = patientDao.updatePatient(patient)
 
     suspend fun deletePatient(patient: PatientEntity) = patientDao.deletePatient(patient)
+    suspend fun dischargePatient(patientId: Int, dischargedAt: String): Int =
+        patientDao.dischargePatient(patientId, dischargedAt)
+    suspend fun purgeDischargedPatientsBefore(cutoff: String): Int =
+        patientDao.deleteDischargedPatientsBefore(cutoff)
 }

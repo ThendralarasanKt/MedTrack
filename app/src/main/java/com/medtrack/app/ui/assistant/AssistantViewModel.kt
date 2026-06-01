@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.medtrack.app.ai.AiAssistantOrchestrator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class AssistantMessage(
     val text: String,
@@ -41,7 +43,9 @@ class AssistantViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             val response = runCatching {
-                orchestrator.handleUserMessage(message)
+                withContext(Dispatchers.Default) {
+                    orchestrator.handleUserMessage(message)
+                }
             }.getOrElse { error ->
                 error.message ?: "Assistant failed to process the request."
             }

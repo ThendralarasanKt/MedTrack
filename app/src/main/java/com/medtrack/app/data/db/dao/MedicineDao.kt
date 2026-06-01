@@ -16,7 +16,7 @@ interface MedicineDao {
     suspend fun getMedicinesForVisitNow(visitId: Int): List<MedicineEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedicine(medicine: MedicineEntity)
+    suspend fun insertMedicine(medicine: MedicineEntity): Long
 
     @Update
     suspend fun updateMedicine(medicine: MedicineEntity)

@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Local AI artifacts
+*.gguf
+app/src/main/assets/models/
