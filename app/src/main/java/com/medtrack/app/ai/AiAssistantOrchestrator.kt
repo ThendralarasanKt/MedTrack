@@ -38,6 +38,8 @@ class AiAssistantOrchestrator @Inject constructor(
                         For creating a new patient visit, call create_patient_visit. A visit needs patientId or patientName, roomNumber, and at least one of symptoms or diagnosis.
                         If the user provided enough details for a data change, call the tool instead of describing what should be done.
                         If required details are missing, ask for only the missing details.
+                        When answering from tool results, write clean plain text only. Do not use Markdown, asterisks, hashes, or code blocks.
+                        For current patient process, summarize patient, visit, medicines, tasks, reports, and follow-up with short labels. Do not expose raw JSON.
                         """.trimIndent()
                     }
                 ),
@@ -70,13 +72,15 @@ class AiAssistantOrchestrator @Inject constructor(
 
                     when (val finalResult = openRouterAiClient.createChatCompletion(finalRequest)) {
                         is OpenRouterClientResult.Success ->
-                            finalResult.response.message?.content?.takeIf { it.isNotBlank() }
-                                ?: toolResultMessages.joinToString(separator = "\n") { it.content.orEmpty() }
+                            (
+                                finalResult.response.message?.content?.takeIf { it.isNotBlank() }
+                                    ?: toolResultMessages.joinToString(separator = "\n") { it.content.orEmpty() }
+                            ).withModelLabel(finalResult.response.model)
                         is OpenRouterClientResult.Error ->
                             toolResultMessages.joinToString(separator = "\n") { it.content.orEmpty() }
                     }
                 } else {
-                    assistantMessage.content.takeIf { it.isNotBlank() }
+                    assistantMessage.content.takeIf { it.isNotBlank() }?.withModelLabel(result.response.model)
                         ?: "OpenRouter returned an empty response."
                 }
             }
@@ -107,9 +111,17 @@ class AiAssistantOrchestrator @Inject constructor(
             val response = mcpClient.callTool(name = toolCall.name, arguments = arguments)
             OpenRouterMessage.toolResult(
                 toolCallId = toolCall.id,
-                content = response.toToolResultText()
+                content = response.toToolResultContent()
             )
         }
+    }
+
+    private fun JSONObject.toToolResultContent(): String {
+        val text = toToolResultText()
+        val structuredContent = optJSONObject("result")?.optJSONObject("structuredContent")
+            ?: return text
+
+        return "$text\nStructured data:\n${structuredContent.toString(2)}"
     }
 
     private fun JSONObject.toToolResultText(): String {
@@ -125,6 +137,24 @@ class AiAssistantOrchestrator @Inject constructor(
             ?: result.optJSONObject("structuredContent")?.optString("message")
             ?: "The tool completed."
     }
+
+    private fun String.withModelLabel(model: String): String =
+        cleanAssistantText().let { cleaned ->
+            if (model.isBlank()) cleaned else "$cleaned\n\nModel: $model"
+        }
+
+    private fun String.cleanAssistantText(): String =
+        lineSequence()
+            .map { line ->
+                line.trim()
+                    .removePrefix("* ")
+                    .removePrefix("- ")
+                    .replace("**", "")
+                    .replace("__", "")
+                    .replace("`", "")
+            }
+            .filterNot { it.isBlank() }
+            .joinToString(separator = "\n")
 
     private fun String.shouldUseMedTrackTools(): Boolean {
         val text = lowercase()

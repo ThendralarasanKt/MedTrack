@@ -16,6 +16,29 @@ class OpenRouterAiClient @Inject constructor(
     private val apiKeyProvider: OpenRouterApiKeyProvider
 ) {
     fun createChatCompletion(request: OpenRouterChatRequest): OpenRouterClientResult {
+        val models = OPENROUTER_FALLBACK_MODELS
+            .let { fallbackModels ->
+                if (request.model in fallbackModels) fallbackModels else listOf(request.model) + fallbackModels
+            }
+            .distinct()
+
+        var lastError: OpenRouterClientResult.Error? = null
+        models.forEach { model ->
+            when (val result = createChatCompletionOnce(request.copy(model = model))) {
+                is OpenRouterClientResult.Success -> return result
+                is OpenRouterClientResult.Error -> lastError = result
+            }
+        }
+
+        return lastError?.let { error ->
+            OpenRouterClientResult.Error(
+                message = "OpenRouter failed after trying ${models.size} model(s). Last error: ${error.message}",
+                httpStatusCode = error.httpStatusCode
+            )
+        } ?: OpenRouterClientResult.Error("OpenRouter request failed.")
+    }
+
+    private fun createChatCompletionOnce(request: OpenRouterChatRequest): OpenRouterClientResult {
         val apiKey = apiKeyProvider.getApiKey()
         if (apiKey.isBlank()) {
             return OpenRouterClientResult.Error(
