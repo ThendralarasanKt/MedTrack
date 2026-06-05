@@ -59,7 +59,7 @@ fun AssistantScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "Offline tool workflow preview",
+                            text = "OpenRouter online AI",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -131,13 +131,13 @@ private fun EmptyAssistantState() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Try a room change",
+                text = "Ask a text question",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "Move Ramesh from 434A to 530B",
+                text = "Tool actions will be added after the OpenRouter client is verified.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

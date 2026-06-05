@@ -66,6 +66,31 @@ interface PatientDao {
     )
     fun getActivePatientListItems(): Flow<List<PatientListItem>>
 
+    @Query(
+        """
+        SELECT
+            patients.id AS id,
+            patients.name AS name,
+            patients.age AS age,
+            patients.sex AS sex,
+            patients.contact AS contact,
+            patients.address AS address,
+            patients.medHistory AS medHistory,
+            patients.photoPath AS photoPath,
+            (
+                SELECT visits.roomNo
+                FROM visits
+                WHERE visits.patientId = patients.id AND visits.roomNo != ''
+                ORDER BY visits.visitDate DESC, visits.visitTime DESC
+                LIMIT 1
+            ) AS latestRoomNo
+        FROM patients
+        WHERE patients.isDischarged = 1
+        ORDER BY patients.dischargedAt DESC, patients.name ASC
+        """
+    )
+    fun getDischargedPatientListItems(): Flow<List<PatientListItem>>
+
     @Query("SELECT * FROM patients WHERE id = :id")
     suspend fun getPatientById(id: Int): PatientEntity?
 
@@ -144,6 +169,42 @@ interface PatientDao {
         """
     )
     fun searchActivePatientListItems(searchQuery: String): Flow<List<PatientListItem>>
+
+    @Query(
+        """
+        SELECT
+            patients.id AS id,
+            patients.name AS name,
+            patients.age AS age,
+            patients.sex AS sex,
+            patients.contact AS contact,
+            patients.address AS address,
+            patients.medHistory AS medHistory,
+            patients.photoPath AS photoPath,
+            (
+                SELECT visits.roomNo
+                FROM visits
+                WHERE visits.patientId = patients.id AND visits.roomNo != ''
+                ORDER BY visits.visitDate DESC, visits.visitTime DESC
+                LIMIT 1
+            ) AS latestRoomNo
+        FROM patients
+        WHERE patients.isDischarged = 1
+            AND (
+                patients.name LIKE '%' || :searchQuery || '%'
+                OR patients.contact LIKE '%' || :searchQuery || '%'
+                OR CAST(patients.id AS TEXT) LIKE '%' || :searchQuery || '%'
+                OR EXISTS (
+                    SELECT 1
+                    FROM visits
+                    WHERE visits.patientId = patients.id
+                        AND visits.roomNo LIKE '%' || :searchQuery || '%'
+                )
+            )
+        ORDER BY patients.dischargedAt DESC, patients.name ASC
+        """
+    )
+    fun searchDischargedPatientListItems(searchQuery: String): Flow<List<PatientListItem>>
 
     @Query(
         """

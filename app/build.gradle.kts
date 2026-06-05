@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,10 +8,16 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { input -> load(input) }
+    }
+}
+
 android {
     namespace = "com.medtrack.app"
     compileSdk = 35
-    ndkVersion = "30.0.14904198"
 
     defaultConfig {
         applicationId = "com.medtrack.app"
@@ -19,9 +27,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        ndk {
-            abiFilters += listOf("arm64-v8a")
-        }
     }
 
     buildTypes {
@@ -42,14 +47,17 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "4.1.2"
-        }
+
+    val openRouterApiKey = localProperties.getProperty("openrouter.api.key", "")
+    defaultConfig {
+        buildConfigField("String", "OPENROUTER_API_KEY", "\"${openRouterApiKey.escapeForBuildConfig()}\"")
     }
 }
+
+fun String.escapeForBuildConfig(): String =
+    replace("\\", "\\\\").replace("\"", "\\\"")
 
 dependencies {
     implementation(libs.androidx.core.ktx)

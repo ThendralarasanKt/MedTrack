@@ -47,10 +47,12 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val patients by viewModel.patients.collectAsState()
+    val dischargedPatients by viewModel.dischargedPatients.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     var selectedTab by remember { mutableIntStateOf(0) }
     val paperColors = LocalPaperColors.current
     val headerMessage = remember { HeaderMessages.random() }
+    val visiblePatients = if (selectedTab == 2) dischargedPatients else patients
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -115,6 +117,11 @@ fun DashboardScreen(
                     onClick = { selectedTab = 1 },
                     text = { Text("Follow-Up", fontWeight = FontWeight.Bold) }
                 )
+                Tab(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    text = { Text("Discharged", fontWeight = FontWeight.Bold) }
+                )
             }
 
             if (selectedTab == 1) {
@@ -124,12 +131,16 @@ fun DashboardScreen(
 
             Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
                 Text(
-                    text = "Patient Records",
+                    text = if (selectedTab == 2) "Discharged Patients" else "Patient Records",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "${patients.size} active patients",
+                    text = if (selectedTab == 2) {
+                        "${dischargedPatients.size} discharged patients"
+                    } else {
+                        "${patients.size} active patients"
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -141,7 +152,7 @@ fun DashboardScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 8.dp),
-                placeholder = { Text("Search by name or ID") },
+                placeholder = { Text("Search by name, ID, contact, or room") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = paperColors.accent) },
                 shape = MaterialTheme.shapes.large,
                 singleLine = true,
@@ -153,15 +164,18 @@ fun DashboardScreen(
                 )
             )
 
-            if (patients.isEmpty()) {
-                EmptyDashboard(isSearch = searchQuery.isNotEmpty())
+            if (visiblePatients.isEmpty()) {
+                EmptyDashboard(
+                    isSearch = searchQuery.isNotEmpty(),
+                    isDischarged = selectedTab == 2
+                )
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(20.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(patients) { patient ->
+                    items(visiblePatients) { patient ->
                         PatientCard(
                             patient = patient,
                             onClick = { onPatientClick(patient.id) }
@@ -174,15 +188,21 @@ fun DashboardScreen(
 }
 
 @Composable
-fun EmptyDashboard(isSearch: Boolean) {
+fun EmptyDashboard(isSearch: Boolean, isDischarged: Boolean = false) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = if (isSearch) "No matches found." else "No records found.",
+                text = if (isSearch) {
+                    "No matches found."
+                } else if (isDischarged) {
+                    "No discharged patients."
+                } else {
+                    "No records found."
+                },
                 style = MaterialTheme.typography.bodyLarge,
                 color = LocalPaperColors.current.textSecondary
             )
-            if (!isSearch) {
+            if (!isSearch && !isDischarged) {
                 Text(
                     text = "Tap + to start a new record.",
                     style = MaterialTheme.typography.bodySmall,

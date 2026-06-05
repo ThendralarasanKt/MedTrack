@@ -39,6 +39,21 @@ class DashboardViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    val dischargedPatients: StateFlow<List<PatientListItem>> = _searchQuery
+        .debounce(300)
+        .flatMapLatest { query ->
+            if (query.isEmpty()) {
+                repository.getDischargedPatientListItems()
+            } else {
+                repository.searchDischargedPatientListItems(query)
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
     fun onSearchQueryChange(newQuery: String) {
         _searchQuery.value = newQuery
     }

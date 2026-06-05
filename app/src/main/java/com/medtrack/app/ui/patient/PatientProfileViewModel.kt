@@ -11,6 +11,7 @@ import com.medtrack.app.data.storage.FileStorageManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -31,6 +32,9 @@ class PatientProfileViewModel @Inject constructor(
 
     private val _visits = MutableStateFlow<List<VisitHistorySummary>>(emptyList())
     val visits = _visits.asStateFlow()
+
+    private val _dischargeSuccess = MutableSharedFlow<Boolean>()
+    val dischargeSuccess = _dischargeSuccess.asSharedFlow()
 
     /**
      * loadPatientData: Called when the screen opens.
@@ -54,6 +58,20 @@ class PatientProfileViewModel @Inject constructor(
                 val updated = patient.copy(photoPath = path)
                 patientRepository.updatePatient(updated)
                 _patient.value = updated
+            }
+        }
+    }
+
+    fun dischargePatient(patientId: Int) {
+        viewModelScope.launch {
+            val dischargedAt = LocalDateTime.now().toString()
+            val updated = patientRepository.dischargePatient(patientId, dischargedAt)
+            if (updated > 0) {
+                _patient.value = _patient.value?.copy(
+                    isDischarged = true,
+                    dischargedAt = dischargedAt
+                )
+                _dischargeSuccess.emit(true)
             }
         }
     }

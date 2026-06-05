@@ -48,9 +48,41 @@ fun PatientProfileScreen(
     val patient by viewModel.patient.collectAsState()
     val visits by viewModel.visits.collectAsState()
     var selectedTab by rememberSaveable(patientId) { mutableIntStateOf(initialTab.coerceIn(0, 1)) }
+    var showDischargeDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(patientId) {
         viewModel.loadPatientData(patientId)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.dischargeSuccess.collect {
+            onBack()
+        }
+    }
+
+    if (showDischargeDialog) {
+        AlertDialog(
+            onDismissRequest = { showDischargeDialog = false },
+            title = { Text("Discharge patient?") },
+            text = {
+                Text("This patient will leave the active list and remain in Discharged for 30 days.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDischargeDialog = false
+                        viewModel.dischargePatient(patientId)
+                    }
+                ) {
+                    Text("Discharge")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDischargeDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -63,6 +95,13 @@ fun PatientProfileScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = paperColors.textPrimary)
                     }
                 },
+                actions = {
+                    if (patient?.isDischarged == false) {
+                        TextButton(onClick = { showDischargeDialog = true }) {
+                            Text("Discharge")
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = paperColors.background,
                     titleContentColor = paperColors.textPrimary
@@ -70,13 +109,15 @@ fun PatientProfileScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onNewVisitClick(patientId) },
-                containerColor = paperColors.accent,
-                contentColor = Color.White,
-                shape = MaterialTheme.shapes.large
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "New Visit")
+            if (patient?.isDischarged != true) {
+                FloatingActionButton(
+                    onClick = { onNewVisitClick(patientId) },
+                    containerColor = paperColors.accent,
+                    contentColor = Color.White,
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "New Visit")
+                }
             }
         }
     ) { paddingValues ->
@@ -155,6 +196,16 @@ fun ProfileInfoTab(patient: PatientEntity, onPhotoPicked: (android.net.Uri) -> U
         PaperInfoSection(title = "Clinical Identity") {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 ProfileRow(label = "Patient ID", value = "#${patient.id}")
+                ProfileRow(
+                    label = "Status",
+                    value = if (patient.isDischarged) "Discharged" else "Active"
+                )
+                if (patient.isDischarged) {
+                    ProfileRow(
+                        label = "Discharged At",
+                        value = patient.dischargedAt?.let { formatAppDate(it.take(10)) } ?: "Recorded"
+                    )
+                }
                 ProfileRow(label = "Age", value = "${patient.age} years")
                 ProfileRow(label = "Sex", value = patient.sex)
                 ProfileRow(label = "Contact", value = patient.contact.ifBlank { "None" })
