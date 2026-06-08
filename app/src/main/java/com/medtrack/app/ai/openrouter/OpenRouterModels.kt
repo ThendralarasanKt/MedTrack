@@ -4,20 +4,21 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 const val OPENROUTER_FREE_MODEL = "openrouter/free"
+const val OPENROUTER_PREFERRED_MODEL = "openai/gpt-oss-120b:free"
 
 val OPENROUTER_FALLBACK_MODELS: List<String> = listOf(
+    OPENROUTER_PREFERRED_MODEL,
     OPENROUTER_FREE_MODEL,
     "nvidia/nemotron-3-ultra-550b-a55b:free",
     "qwen/qwen3-coder:free",
     "z-ai/glm-4.5-air:free",
-    "openai/gpt-oss-120b:free",
     "meta-llama/llama-3.3-70b-instruct:free"
 )
 
 data class OpenRouterChatRequest(
     val messages: List<OpenRouterMessage>,
     val tools: List<OpenRouterTool> = emptyList(),
-    val model: String = OPENROUTER_FREE_MODEL,
+    val model: String = OPENROUTER_PREFERRED_MODEL,
     val toolChoice: String? = "auto",
     val provider: OpenRouterProviderOptions = OpenRouterProviderOptions()
 ) {

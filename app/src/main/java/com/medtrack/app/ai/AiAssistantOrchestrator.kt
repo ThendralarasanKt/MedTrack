@@ -14,14 +14,26 @@ import javax.inject.Singleton
 import org.json.JSONException
 import org.json.JSONObject
 
+data class AiConversationMessage(
+    val text: String,
+    val fromUser: Boolean
+)
+
 @Singleton
 class AiAssistantOrchestrator @Inject constructor(
     private val openRouterAiClient: OpenRouterAiClient,
     private val mcpClient: InAppMcpClient
 ) {
-    suspend fun handleUserMessage(message: String): String {
-        val shouldRequireToolCall = message.shouldRequireMedTrackToolCall()
-        val tools = if (message.shouldUseMedTrackTools()) {
+    suspend fun handleUserMessage(
+        message: String,
+        conversation: List<AiConversationMessage> = emptyList()
+    ): String {
+        val contextText = (conversation + AiConversationMessage(message, fromUser = true))
+            .joinToString(separator = "\n") { item ->
+                if (item.fromUser) "User: ${item.text}" else "Assistant: ${item.text}"
+            }
+        val shouldRequireToolCall = contextText.shouldRequireMedTrackToolCall()
+        val tools = if (contextText.shouldUseMedTrackTools()) {
             mcpClient.listTools()
             MedTrackMcpCatalog.tools.toOpenRouterTools()
         } else {
@@ -36,6 +48,7 @@ class AiAssistantOrchestrator @Inject constructor(
                         """
                         You are MedTrack assistant. Use the provided tools when the user asks to read or change MedTrack data.
                         For creating a new patient visit, call create_patient_visit. A visit needs patientId or patientName, roomNumber, and at least one of symptoms or diagnosis.
+                        If the patient was just created earlier in this chat and has no room yet, use that patient name or patientId to create the first visit. Do not try to find an existing room for a first visit.
                         If the user provided enough details for a data change, call the tool instead of describing what should be done.
                         If required details are missing, ask for only the missing details.
                         When answering from tool results, write clean plain text only. Do not use Markdown, asterisks, hashes, or code blocks.
@@ -43,6 +56,16 @@ class AiAssistantOrchestrator @Inject constructor(
                         """.trimIndent()
                     }
                 ),
+                *conversation
+                    .takeLast(MAX_CONTEXT_MESSAGES)
+                    .map { item ->
+                        if (item.fromUser) {
+                            OpenRouterMessage.user(item.text)
+                        } else {
+                            OpenRouterMessage.assistant(item.text)
+                        }
+                    }
+                    .toTypedArray(),
                 OpenRouterMessage.user(message)
             ),
             tools = tools,
@@ -214,5 +237,9 @@ class AiAssistantOrchestrator @Inject constructor(
         )
         return changeKeywords.any { keyword -> keyword in text } &&
             medTrackKeywords.any { keyword -> keyword in text }
+    }
+
+    companion object {
+        private const val MAX_CONTEXT_MESSAGES = 12
     }
 }

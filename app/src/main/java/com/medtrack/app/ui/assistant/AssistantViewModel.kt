@@ -3,6 +3,7 @@ package com.medtrack.app.ui.assistant
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.medtrack.app.ai.AiAssistantOrchestrator
+import com.medtrack.app.ai.AiConversationMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,9 @@ class AssistantViewModel @Inject constructor(
         val message = _input.value.trim()
         if (message.isBlank() || _isLoading.value) return
 
+        val conversation = _messages.value.map {
+            AiConversationMessage(text = it.text, fromUser = it.fromUser)
+        }
         _input.value = ""
         _messages.value = _messages.value + AssistantMessage(message, fromUser = true)
 
@@ -44,7 +48,7 @@ class AssistantViewModel @Inject constructor(
             _isLoading.value = true
             val response = runCatching {
                 withContext(Dispatchers.Default) {
-                    orchestrator.handleUserMessage(message)
+                    orchestrator.handleUserMessage(message, conversation)
                 }
             }.getOrElse { error ->
                 error.message ?: "Assistant failed to process the request."
