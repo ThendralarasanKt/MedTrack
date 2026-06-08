@@ -1,6 +1,7 @@
 package com.medtrack.app.ui.assistant
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -147,34 +149,53 @@ private fun EmptyAssistantState() {
 
 @Composable
 private fun AssistantBubble(message: AssistantMessage) {
+    val bubbleColor = if (message.fromUser) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.secondaryContainer
+    }
+    val contentColor = if (message.fromUser) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSecondaryContainer
+    }
+    val borderColor = if (message.fromUser) {
+        Color.Transparent
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (message.fromUser) Arrangement.End else Arrangement.Start
     ) {
         Surface(
-            modifier = Modifier.fillMaxWidth(0.84f),
-            color = if (message.fromUser) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
-            },
+            modifier = Modifier
+                .fillMaxWidth(0.84f)
+                .border(
+                    width = if (message.fromUser) 0.dp else 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(
+                        topStart = 14.dp,
+                        topEnd = 14.dp,
+                        bottomStart = if (message.fromUser) 14.dp else 4.dp,
+                        bottomEnd = if (message.fromUser) 4.dp else 14.dp
+                    )
+                ),
+            color = bubbleColor,
             shape = RoundedCornerShape(
                 topStart = 14.dp,
                 topEnd = 14.dp,
                 bottomStart = if (message.fromUser) 14.dp else 4.dp,
                 bottomEnd = if (message.fromUser) 4.dp else 14.dp
             ),
-            tonalElevation = if (message.fromUser) 0.dp else 1.dp
+            tonalElevation = if (message.fromUser) 0.dp else 2.dp
         ) {
             Text(
                 text = message.text,
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (message.fromUser) {
-                    MaterialTheme.colorScheme.onPrimaryContainer
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                }
+                color = contentColor
             )
         }
     }
