@@ -1,0 +1,14 @@
+{
+  "route_id": "clinical-reasoning-v1",
+  "capability": "CLINICAL_REASONING",
+  "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "provider_policy": "medtrack-synthetic-zdr-v1",
+  "prompt_version": "clinical-reasoning-v1",
+  "schema_version": "care-commands-1",
+  "temperature": 0,
+  "max_output_tokens": 4000,
+  "timeout_seconds": 60,
+  "retry_policy": "transient-once",
+  "enabled": true,
+  "notes": "Larger free Nemotron for reasoning routes. Verified available 2026-09-22."
+}

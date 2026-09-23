@@ -16,4 +16,25 @@ local.properties
 
 # Local AI artifacts
 *.gguf
-app/src/main/assets/models/
+apps/android/src/main/assets/models/
+
+# SQLite dumps and local snapshots
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+medtrack_db*
+dbsnap/
+dbverify/
+
+# Python gateway
+backend/.data/
+backend/.venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# AI Testing Workbench local state
+AI Testing workbench/.workbench/
+AI Testing workbench/.venv/

@@ -1,0 +1,45 @@
+{
+  "$id": "https://medtrack.local/contracts/v1/command-schema.json",
+  "title": "care-commands-1",
+  "commandSchemaVersion": "care-commands-1",
+  "compatibleClientVersions": ["1.0"],
+  "mutatingOperations": [
+    "TRANSFER",
+    "MEDICATION_START",
+    "MEDICATION_STOP",
+    "ASSIGN_TASK",
+    "RESPOND_TASK",
+    "RECORD_PROBLEM",
+    "RECORD_ENCOUNTER",
+    "RECORD_OBSERVATION"
+  ],
+  "targetRules": {
+    "TRANSFER": {
+      "targetKind": "LOCATION",
+      "requiredId": "locationId",
+      "expectedVersionField": "expectedLocationAssignmentVersion",
+      "displayHintNotSufficient": true
+    },
+    "MEDICATION_STOP": {
+      "targetKind": "MEDICATION_ORDER",
+      "requiredId": "medicationOrderId",
+      "expectedVersionField": "expectedOrderVersion",
+      "displayHintNotSufficient": true
+    },
+    "ASSIGN_TASK": {
+      "targetKind": "ADMISSION",
+      "requiredId": "admissionId"
+    },
+    "RESPOND_TASK": {
+      "targetKind": "TASK",
+      "requiredId": "taskId",
+      "expectedVersionField": "expectedTaskVersion"
+    }
+  },
+  "relativeTimeRule": {
+    "required": ["anchor", "resolvedAt", "zoneId"]
+  },
+  "consistencyRules": [
+    "STAT_VS_DELAYED_SAME_FOCUS"
+  ]
+}

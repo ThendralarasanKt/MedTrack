@@ -22,6 +22,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Doctors CRM"
+rootProject.name = "MedTrack"
 include(":app")
+project(":app").projectDir = file("apps/android")
  

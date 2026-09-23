@@ -1,0 +1,4 @@
+{
+  "error": { "code": "VALIDATION", "message": "Context digest does not match the supplied manifest." },
+  "reason": "stale-context"
+}

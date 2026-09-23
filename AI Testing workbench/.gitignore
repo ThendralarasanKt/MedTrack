@@ -1,0 +1,15 @@
+.workbench/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+.env.*
+secrets/
+raw-live/
+*.key

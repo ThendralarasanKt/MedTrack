@@ -1,0 +1,50 @@
+{
+  "$id": "https://medtrack.local/contracts/v1/inference-job.request.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "requestId",
+    "deviceId",
+    "clientVersion",
+    "commandSchemaVersion",
+    "purpose",
+    "contextDigest",
+    "contextManifest",
+    "sourceRefs"
+  ],
+  "properties": {
+    "requestId": { "type": "string", "minLength": 8 },
+    "deviceId": { "type": "string", "minLength": 8 },
+    "clientVersion": { "type": "string" },
+    "commandSchemaVersion": { "type": "string" },
+    "purpose": {
+      "type": "string",
+      "enum": [
+        "SINGLE_PATIENT_CAPTURE",
+        "GLOBAL_NEW_PATIENT",
+        "CROSS_PATIENT_EXPLICIT",
+        "REASONING",
+        "DOCUMENT_EXTRACT"
+      ]
+    },
+    "patientId": { "type": ["string", "null"] },
+    "admissionId": { "type": ["string", "null"] },
+    "contextDigest": { "type": "string", "minLength": 16 },
+    "contextManifest": { "$ref": "./context-manifest.json" },
+    "sourceRefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "ref"],
+        "properties": {
+          "kind": { "enum": ["TEXT", "DOCUMENT", "TRANSCRIPT"] },
+          "ref": { "type": "string" },
+          "artifactId": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "inputDigest": { "type": "string" },
+    "text": { "type": ["string", "null"] },
+    "maxResponseBytes": { "type": "integer", "maximum": 262144 }
+  }
+}

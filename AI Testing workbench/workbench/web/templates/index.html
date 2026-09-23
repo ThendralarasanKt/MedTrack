@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MedTrack AI Testing Workbench</title>
+  <link rel="stylesheet" href="/workbench/static/workbench.css" />
+</head>
+<body>
+  <header class="banner" id="modeBanner" role="status">{{ banner }}</header>
+  <main class="shell">
+    <h1>MedTrack AI Testing Workbench</h1>
+    <p class="lede">
+      Evaluate Jev and proposal flows on synthetic cases. Proposals are never written to Android clinical records.
+      “Simulate approval” stores evaluation ground truth only.
+    </p>
+
+    <section class="panel" aria-labelledby="config-title">
+      <h2 id="config-title">Config &amp; routing</h2>
+      <p class="muted" id="configSummary">
+        Experiment {{ config_summary.activeExperimentId }} ·
+        QS {{ config_summary.questionSetVersion }} ·
+        routing {{ config_summary.routingPolicyVersion }}
+      </p>
+      <pre id="configInspect" class="meta">Loading config…</pre>
+      <p id="keyHint" class="muted">
+        {% if key_ready %}
+        OpenRouter key detected. You can select LIVE_SYNTHETIC for provider calls on synthetic cases.
+        {% else %}
+        OpenRouter key not set. Stay on MOCK, or set <code>OPENROUTER_API_KEY</code> and restart when ready for live testing.
+        {% endif %}
+      </p>
+    </section>
+
+    <section class="panel" aria-labelledby="runner-title">
+      <h2 id="runner-title">Case runner</h2>
+      <label>
+        Mode
+        <select id="runMode">
+          <option value="MOCK" selected>MOCK (no provider calls)</option>
+          <option value="LIVE_SYNTHETIC" {% if not key_ready %}disabled{% endif %}>
+            LIVE_SYNTHETIC {% if not key_ready %}(needs OPENROUTER_API_KEY){% endif %}
+          </option>
+        </select>
+      </label>
+      <label>
+        Test case
+        <select id="caseSelect">
+          {% for case in cases %}
+          <option
+            value="{{ case.id }}"
+            data-text="{{ case.inputText | e }}"
+            data-fixture="{{ case.fixtureTag or '' }}"
+            data-context='{{ case.context | tojson }}'
+          >{{ case.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label id="fixtureLabel">
+        Fixture tag
+        <select id="fixtureTag">
+          <option value="">heuristic</option>
+          <option value="success">success</option>
+          <option value="clarification">clarification</option>
+          <option value="partial-input">partial-input</option>
+          <option value="stale-context">stale-context</option>
+          <option value="timeout">timeout</option>
+        </select>
+      </label>
+      <label>
+        Input text
+        <textarea id="inputText" rows="6"></textarea>
+      </label>
+      <label>
+        Context (JSON)
+        <textarea id="contextJson" rows="4"></textarea>
+      </label>
+      <div class="actions">
+        <button type="button" id="runBtn">Run pipeline</button>
+        <span id="runStatus" class="muted"></span>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="routing-title">
+      <h2 id="routing-title">Routing inspector</h2>
+      <p id="routingSummary" class="muted">Run a case to see matched rules and reasons.</p>
+      <pre id="routingDetail" class="meta"></pre>
+    </section>
+
+    <section class="panel" aria-labelledby="usage-title">
+      <h2 id="usage-title">Models &amp; cost</h2>
+      <p id="usageSummary" class="muted">Per-invocation model, tokens, latency and cost (when the provider returns it).</p>
+      <pre id="usageDetail" class="meta"></pre>
+    </section>
+
+    <section class="panel" aria-labelledby="trace-title">
+      <h2 id="trace-title">Trace</h2>
+      <ol id="traceList" class="trace"></ol>
+      <pre id="traceMeta" class="meta"></pre>
+    </section>
+
+    <section class="panel" aria-labelledby="review-title">
+      <h2 id="review-title">Proposal review</h2>
+      <p id="proposalSummary" class="muted">Run a case to inspect proposals.</p>
+      <div id="operations"></div>
+      <div class="actions review-actions">
+        <label>
+          Decision
+          <select id="reviewDecision">
+            {% for d in review_decisions %}
+            <option value="{{ d }}">{{ d }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          Operation ID (optional)
+          <input id="reviewOpId" type="text" placeholder="op-…" />
+        </label>
+        <label>
+          Comment
+          <input id="reviewComment" type="text" placeholder="Why?" />
+        </label>
+        <button type="button" id="reviewBtn" disabled>Save review</button>
+      </div>
+      <p id="reviewNote" class="muted"></p>
+      <ul id="reviewList"></ul>
+    </section>
+  </main>
+  <script src="/workbench/static/workbench.js"></script>
+</body>
+</html>

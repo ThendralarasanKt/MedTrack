@@ -1,0 +1,14 @@
+{
+  "route_id": "clinical-extraction-v1",
+  "capability": "CLINICAL_EXTRACTION",
+  "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+  "provider_policy": "medtrack-synthetic-zdr-v1",
+  "prompt_version": "clinical-extraction-v1",
+  "schema_version": "care-commands-1",
+  "temperature": 0,
+  "max_output_tokens": 4000,
+  "timeout_seconds": 45,
+  "retry_policy": "transient-once",
+  "enabled": true,
+  "notes": "Pinned free model verified available on OpenRouter (2026-09-22). Not a release-approved model."
+}

@@ -1,0 +1,23 @@
+{
+  "requestId": "req-success-001",
+  "deviceId": "dev-ankita-001",
+  "clientVersion": "1.0",
+  "commandSchemaVersion": "care-commands-1",
+  "purpose": "SINGLE_PATIENT_CAPTURE",
+  "patientId": "pat-001",
+  "admissionId": "adm-001",
+  "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "inputDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "contextManifest": {
+    "snapshotAt": "2026-09-20T08:00:00+05:30",
+    "selectionScope": "SINGLE_PATIENT",
+    "records": [
+      { "type": "Admission", "id": "adm-001", "version": 4 },
+      { "type": "LocationAssignment", "id": "locas-001", "version": 2 },
+      { "type": "MedicationOrder", "id": "medord-cef-001", "version": 3 }
+    ],
+    "missing": []
+  },
+  "sourceRefs": [{ "kind": "TEXT", "ref": "draft-success-001" }],
+  "text": "Transfer to ICU Bed 04 (location loc-icu-04). Stop Ceftriaxone order medord-cef-001."
+}

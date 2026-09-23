@@ -1,0 +1,14 @@
+{
+  "route_id": "clarification-v1",
+  "capability": "CLARIFICATION",
+  "model_id": "inclusionai/ling-3.0-flash-sante:free",
+  "provider_policy": "medtrack-synthetic-zdr-v1",
+  "prompt_version": "clarification-v1",
+  "schema_version": "care-commands-1",
+  "temperature": 0,
+  "max_output_tokens": 2000,
+  "timeout_seconds": 45,
+  "retry_policy": "transient-once",
+  "enabled": true,
+  "notes": "Light free model for clarification drafts. Verified available 2026-09-22."
+}

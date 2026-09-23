@@ -1,0 +1,19 @@
+{
+  "proposalId": "prop-label-only-001",
+  "jobId": "job-label-only-001",
+  "requestId": "req-label-only-001",
+  "commandSchemaVersion": "care-commands-1",
+  "contextDigest": "sha256:ffffffffffffffffffffffffffffffff",
+  "identity": { "state": "RESOLVED", "patientId": "pat-001", "admissionId": "adm-001" },
+  "summary": "Transfer to ICU Bed 04.",
+  "operations": [
+    {
+      "operationId": "op-transfer-label",
+      "type": "TRANSFER",
+      "target": { "kind": "LOCATION", "id": null, "displayHint": "ICU Bed 04" },
+      "fields": { "admissionId": "adm-001" },
+      "unresolvedFields": []
+    }
+  ],
+  "provenance": { "routeVersion": "route-v1" }
+}

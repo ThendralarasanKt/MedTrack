@@ -1,0 +1,14 @@
+{
+  "route_id": "handover-summary-v1",
+  "capability": "HANDOVER_SUMMARY",
+  "model_id": "qwen/qwen3.8-27b:free",
+  "provider_policy": "medtrack-synthetic-zdr-v1",
+  "prompt_version": "handover-summary-v1",
+  "schema_version": "care-commands-1",
+  "temperature": 0,
+  "max_output_tokens": 4000,
+  "timeout_seconds": 45,
+  "retry_policy": "transient-once",
+  "enabled": true,
+  "notes": "Free Qwen for summary routes. Verified available 2026-09-22."
+}

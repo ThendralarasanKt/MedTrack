@@ -1,0 +1,21 @@
+{
+  "proposalId": "prop-partial-001",
+  "jobId": "job-partial-001",
+  "requestId": "req-partial-001",
+  "commandSchemaVersion": "care-commands-1",
+  "contextDigest": "sha256:dddddddddddddddddddddddddddddddd",
+  "identity": { "state": "RESOLVED", "patientId": "pat-001", "admissionId": "adm-001" },
+  "summary": "Medication stop cannot be completed; order id is missing.",
+  "operations": [
+    {
+      "operationId": "op-stop-partial",
+      "type": "MEDICATION_STOP",
+      "atomicGroupId": "g-meds",
+      "dependsOn": [],
+      "target": { "kind": "MEDICATION_ORDER", "id": null, "displayHint": "Ceftriaxone" },
+      "fields": { "admissionId": "adm-001" },
+      "unresolvedFields": ["medicationOrderId"]
+    }
+  ],
+  "provenance": { "routeVersion": "route-v1" }
+}

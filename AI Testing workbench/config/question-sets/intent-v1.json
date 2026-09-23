@@ -1,0 +1,89 @@
+{
+  "version": "intent-v1",
+  "digest": "workbench-intent-v1",
+  "enabled": true,
+  "description": "Workbench copy of gateway QUESTION_SET_V1. Matches OpenRouter Decisions criteria shape.",
+  "questions": {
+    "requests_record_lookup": {
+      "type": "noul",
+      "instructions": "Is the user asking to retrieve stored information?",
+      "criteria": {
+        "true": "The text asks to look up, show, list, or retrieve existing record data.",
+        "false": "The text does not ask to retrieve stored information."
+      }
+    },
+    "requests_patient_creation": {
+      "type": "noul",
+      "instructions": "Is a new patient/admission being described for registration?",
+      "criteria": {
+        "true": "The text describes admitting or registering a new patient/admission.",
+        "false": "No new patient registration is being requested."
+      }
+    },
+    "requests_location_change": {
+      "type": "noul",
+      "instructions": "Is a transfer/location update requested?",
+      "criteria": {
+        "true": "The text requests a bed/ward/location transfer or update.",
+        "false": "No location or transfer change is requested."
+      }
+    },
+    "requests_task_or_reminder": {
+      "type": "noul",
+      "instructions": "Is work to be scheduled, completed, cancelled or rescheduled?",
+      "criteria": {
+        "true": "The text schedules, completes, cancels, or reschedules a task/reminder.",
+        "false": "No task or reminder change is requested."
+      }
+    },
+    "contains_medication_change": {
+      "type": "noul",
+      "instructions": "Does this include a proposed or reported medication change?",
+      "criteria": {
+        "true": "The text starts, stops, changes, or reports a medication/dose change.",
+        "false": "No medication change is described."
+      }
+    },
+    "contains_multiple_patient_contexts": {
+      "type": "noul",
+      "instructions": "Does the source appear to refer to multiple patients?",
+      "criteria": {
+        "true": "The text clearly refers to more than one patient.",
+        "false": "The text refers to at most one patient context."
+      }
+    },
+    "statement_kind": {
+      "type": "choice",
+      "instructions": "Select the statement kind.",
+      "criteria": {
+        "observation": "Reported finding",
+        "completed_care": "Care already performed",
+        "recommendation": "Requested change",
+        "question": "A question",
+        "mixed": "More than one kind",
+        "unclear": "Cannot tell"
+      }
+    },
+    "processing_demand": {
+      "type": "score",
+      "instructions": "How much interpretation does this input need?",
+      "criteria": ["Straightforward", "Contextual", "Complex"]
+    },
+    "source_supports_action": {
+      "type": "noul",
+      "instructions": "Does the supplied source support this proposed action?",
+      "criteria": {
+        "true": "The supplied source text supports the proposed action.",
+        "false": "The source does not support the proposed action, or support is unclear."
+      }
+    },
+    "unresolved_ambiguity": {
+      "type": "noul",
+      "instructions": "Does this proposal still depend on ambiguous intent or attribution?",
+      "criteria": {
+        "true": "Important intent or attribution remains ambiguous.",
+        "false": "Intent and attribution are sufficiently clear."
+      }
+    }
+  }
+}

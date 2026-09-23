@@ -1,0 +1,57 @@
+{
+  "proposalId": "prop-success-001",
+  "jobId": "job-success-001",
+  "requestId": "req-success-001",
+  "commandSchemaVersion": "care-commands-1",
+  "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "identity": { "state": "RESOLVED", "patientId": "pat-001", "admissionId": "adm-001" },
+  "summary": "Transfer to location loc-icu-04 and stop medication order medord-cef-001.",
+  "operations": [
+    {
+      "operationId": "op-transfer-001",
+      "type": "TRANSFER",
+      "atomicGroupId": "g-location",
+      "dependsOn": [],
+      "target": {
+        "kind": "LOCATION",
+        "id": "loc-icu-04",
+        "expectedVersion": 2,
+        "displayHint": "ICU Bed 04"
+      },
+      "fields": { "admissionId": "adm-001" },
+      "effectiveTime": {
+        "precision": "INSTANT",
+        "at": "2026-09-20T08:05:00+05:30",
+        "zoneId": "Asia/Kolkata"
+      },
+      "evidence": [{ "sourceRef": "draft-success-001", "span": "Transfer to ICU Bed 04" }],
+      "unresolvedFields": []
+    },
+    {
+      "operationId": "op-stop-001",
+      "type": "MEDICATION_STOP",
+      "atomicGroupId": "g-meds",
+      "dependsOn": [],
+      "target": {
+        "kind": "MEDICATION_ORDER",
+        "id": "medord-cef-001",
+        "expectedVersion": 3,
+        "displayHint": "Ceftriaxone"
+      },
+      "fields": { "admissionId": "adm-001" },
+      "effectiveTime": {
+        "precision": "INSTANT",
+        "at": "2026-09-20T08:05:00+05:30",
+        "zoneId": "Asia/Kolkata"
+      },
+      "evidence": [{ "sourceRef": "draft-success-001", "span": "Stop Ceftriaxone" }],
+      "unresolvedFields": []
+    }
+  ],
+  "provenance": {
+    "routeVersion": "route-v1",
+    "decisionModel": "mock-jev",
+    "generationModel": "mock-extract",
+    "promptVersion": "extract-v1"
+  }
+}

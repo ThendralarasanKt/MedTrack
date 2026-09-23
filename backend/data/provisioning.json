@@ -1,0 +1,26 @@
+{
+  "comment": "First-release production would list only Ankita's verified Firebase subject. Tests include a second isolated owner. Adding another user is a data change, not a new API.",
+  "identities": [
+    {
+      "authIssuer": "medtrack-test",
+      "authSubject": "synthetic-ankita",
+      "accountId": "00000000-0000-4000-8000-000000000001",
+      "userId": "user-ankita",
+      "displayName": "Synthetic Ankita",
+      "role": "OWNER"
+    },
+    {
+      "authIssuer": "medtrack-test",
+      "authSubject": "synthetic-second",
+      "accountId": "00000000-0000-4000-8000-000000000901",
+      "userId": "user-second",
+      "displayName": "Synthetic Second",
+      "role": "OWNER"
+    }
+  ],
+  "productionAnkita": {
+    "authIssuer": "https://securetoken.google.com/medtrack-6497f",
+    "authSubjectEnv": "MEDTRACK_ANKITA_AUTH_SUBJECT",
+    "accountId": "00000000-0000-4000-8000-000000000001"
+  }
+}

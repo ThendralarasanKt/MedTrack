@@ -1,0 +1,76 @@
+{
+  "version": "routing-v1",
+  "enabled": true,
+  "noulThreshold": 0.8,
+  "questionSetVersion": "intent-v1",
+  "rules": [
+    {
+      "id": "multi-patient-clarify",
+      "route": "CLARIFICATION",
+      "reason": "Multiple patient contexts without CROSS_PATIENT_EXPLICIT purpose.",
+      "when": {
+        "noul_gte": ["contains_multiple_patient_contexts", 0.8],
+        "purpose_ne": "CROSS_PATIENT_EXPLICIT"
+      }
+    },
+    {
+      "id": "identity-unresolved",
+      "route": "CLARIFICATION",
+      "reason": "Patient/admission identity is unresolved.",
+      "when": { "identity_unresolved": true }
+    },
+    {
+      "id": "ambiguity",
+      "route": "CLARIFICATION",
+      "reason": "Unresolved ambiguity flagged by Jev.",
+      "when": { "noul_gte": ["unresolved_ambiguity", 0.8] }
+    },
+    {
+      "id": "location",
+      "route": "ADMINISTRATIVE_EXTRACTION",
+      "reason": "Location/transfer intent above threshold.",
+      "when": { "noul_gte": ["requests_location_change", 0.8] }
+    },
+    {
+      "id": "medication",
+      "route": "CLINICAL_EXTRACTION",
+      "reason": "Medication change intent above threshold.",
+      "when": { "noul_gte": ["contains_medication_change", 0.8] }
+    },
+    {
+      "id": "task-reminder",
+      "route": "ADMINISTRATIVE_EXTRACTION",
+      "reason": "Task or reminder intent above threshold.",
+      "when": { "noul_gte": ["requests_task_or_reminder", 0.8] }
+    },
+    {
+      "id": "admit",
+      "route": "ADMINISTRATIVE_EXTRACTION",
+      "reason": "Patient creation / admit intent above threshold.",
+      "when": { "noul_gte": ["requests_patient_creation", 0.8] }
+    },
+    {
+      "id": "reasoning",
+      "route": "CLINICAL_REASONING",
+      "reason": "Processing demand scored complex.",
+      "when": { "score_eq": ["processing_demand", 2] }
+    },
+    {
+      "id": "handover-summary",
+      "route": "HANDOVER_SUMMARY",
+      "reason": "Statement kind is question/mixed with summarization cues in text.",
+      "when": { "text_any": ["summarize", "handover", "hand over", "ward round"] }
+    }
+  ],
+  "defaultRoute": "ADMINISTRATIVE_EXTRACTION",
+  "defaultReason": "No higher-priority rule matched; use administrative extraction.",
+  "modelRouteMap": {
+    "CLARIFICATION": "clarification-v1",
+    "ADMINISTRATIVE_EXTRACTION": "administrative-extraction-v1",
+    "CLINICAL_EXTRACTION": "clinical-extraction-v1",
+    "CLINICAL_REASONING": "clinical-reasoning-v1",
+    "HANDOVER_SUMMARY": "handover-summary-v1",
+    "DOCUMENT_EXTRACTION": "document-extraction-v1",
+    "DETERMINISTIC": null
+  }
+}

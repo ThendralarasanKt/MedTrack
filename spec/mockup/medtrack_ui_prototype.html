@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedTrack - Google Native Inpatient Clinical OS</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Google Sans', 'Roboto', system-ui, -apple-system, sans-serif; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 6px; }
+    ::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+    .google-shadow-sm { box-shadow: 0 1px 2px 0 rgba(60,64,67,0.1), 0 1px 3px 1px rgba(60,64,67,0.06); }
+    .google-shadow-md { box-shadow: 0 1px 3px 0 rgba(60,64,67,0.2), 0 4px 8px 3px rgba(60,64,67,0.1); }
+    .google-shadow-lg { box-shadow: 0 4px 12px 0 rgba(60,64,67,0.2), 0 8px 24px 6px rgba(60,64,67,0.12); }
+    .google-fab-shadow { box-shadow: 0 2px 5px 0 rgba(60,64,67,0.26), 0 4px 10px 0 rgba(60,64,67,0.18); }
+    .toast-anim { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; }
+  </style>
+</head>
+<body class="bg-[#F8F9FA] text-[#202124] antialiased p-2 sm:p-5 min-h-screen flex flex-col items-center justify-start">
+
+  <!-- Desktop Header & Screen Navigator -->
+  <header class="w-full max-w-6xl mb-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-[#E0E2E6] pb-3 bg-white p-4 rounded-2xl google-shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-[#E8F0FE] flex items-center justify-center text-[#1A73E8]">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-[#E8F0FE] text-[#1A73E8] rounded-full">Google Native M3</span>
+          <span class="text-xs text-[#5F6368]">Full Interactive Prototype</span>
+        </div>
+        <h1 class="text-xl font-bold tracking-tight text-[#202124] flex items-center gap-2">
+          MedTrack <span class="text-[#1A73E8] font-normal text-base">Inpatient Clinical OS</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Quick Desktop Screen Jumper -->
+    <div class="flex flex-wrap items-center gap-1.5 bg-[#F1F3F4] p-1.5 rounded-full text-xs">
+      <button onclick="navTo('census')" id="btn-top-census" class="px-3 py-1.5 rounded-full font-medium transition-all bg-[#1A73E8] text-white shadow-sm">1. Census</button>
+      <button onclick="navTo('work')" id="btn-top-work" class="px-3 py-1.5 rounded-full font-medium transition-all text-[#444746] hover:bg-[#E8EAED]">2. Rounds Queue</button>
+      <button onclick="navTo('patient')" id="btn-top-patient" class="px-3 py-1.5 rounded-full font-medium transition-all text-[#444746] hover:bg-[#E8EAED]">3. Patient Hub</button>
+      <button onclick="navTo('inbox')" id="btn-top-inbox" class="px-3 py-1.5 rounded-full font-medium transition-all text-[#444746] hover:bg-[#E8EAED]">4. Referral Inbox</button>
+      <button onclick="navTo('capture')" id="btn-top-capture" class="px-3 py-1.5 rounded-full font-medium transition-all text-[#444746] hover:bg-[#E8EAED]">5. AI Action Gate</button>
+      <button onclick="navTo('handover')" id="btn-top-handover" class="px-3 py-1.5 rounded-full font-medium transition-all text-[#444746] hover:bg-[#E8EAED]">6. Handover</button>
+    </div>
+  </header>
+
+  <!-- Notification Toast Container -->
+  <div id="toast" class="fixed top-4 z-50 transform -translate-y-24 opacity-0 pointer-events-none toast-anim flex items-center gap-2 bg-[#202124] text-white text-xs px-4 py-3 rounded-xl shadow-2xl">
+    <svg id="toast-icon" class="w-4 h-4 text-[#34A853]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+    <span id="toast-msg">Action completed successfully</span>
+  </div>
+
+  <!-- Main Phone Device Simulation Wrapper -->
+  <div class="w-full max-w-6xl flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6">
+    
+    <!-- Phone Mockup Device (Google Pixel Style Frame) -->
+    <div class="w-full max-w-[400px] h-[820px] bg-white border-[10px] border-[#E8EAED] rounded-[48px] shadow-2xl flex flex-col overflow-hidden relative ring-1 ring-[#DADCE0] shrink-0">
+      
+      <!-- Top Mobile Status Bar -->
+      <div class="h-9 bg-white px-7 flex items-center justify-between text-[11px] text-[#444746] font-medium select-none z-30 shrink-0 border-b border-[#F1F3F4]">
+        <span>09:41</span>
+        <div class="w-20 h-4 bg-[#F1F3F4] rounded-full flex items-center justify-center">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#BDC1C6]"></span>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-semibold">
+          <span>5G</span>
+          <span>100%</span>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SCREEN 1: CENSUS (DASHBOARD & INPATIENT LIST) -->
+      <!-- ========================================================================= -->
+      <div id="screen-census" class="screen flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+        
+        <!-- App Bar with Live Search -->
+        <div class="px-4 pt-3 pb-2.5 bg-white border-b border-[#E0E2E6] shrink-0">
+          <div class="flex items-center justify-between mb-2.5">
+            <div>
+              <h2 class="text-base font-bold text-[#202124] leading-tight">Dr. Ankita's Census</h2>
+              <p class="text-[11px] text-[#5F6368]">City Hospital &bull; <span id="census-count">18</span> Active Inpatients</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openModal('modal-admit')" title="Admit New Inpatient" class="p-2 bg-[#E8F0FE] hover:bg-[#D2E3FC] text-[#1A73E8] rounded-full transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              </button>
+              <div class="w-7 h-7 rounded-full bg-[#1A73E8] text-white flex items-center justify-center text-xs font-semibold shadow-sm">AB</div>
+            </div>
+          </div>
+
+          <!-- Search Input Box -->
+          <div class="relative mb-2.5">
+            <input type="text" id="census-search" oninput="onSearchCensus(this.value)" placeholder="Search patient, bed, UHID, diagnosis..." 
+              class="w-full pl-9 pr-8 py-2 bg-[#F1F3F4] text-xs text-[#202124] rounded-full placeholder-[#5F6368] focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#1A73E8] border border-transparent transition-all">
+            <svg class="w-4 h-4 text-[#5F6368] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <button onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-3 top-2.5 text-xs text-[#5F6368] hover:text-[#202124]">&times;</button>
+          </div>
+
+          <!-- Filter Segment Pills -->
+          <div class="flex items-center gap-1.5 overflow-x-auto py-0.5 text-xs font-medium no-scrollbar">
+            <button onclick="setCensusFilter('primary')" id="cfilter-primary" class="px-3 py-1 rounded-full text-[#1A73E8] bg-[#E8F0FE] font-semibold shrink-0 transition-all">Primary (<span id="count-primary">12</span>)</button>
+            <button onclick="setCensusFilter('referral')" id="cfilter-referral" class="px-3 py-1 rounded-full text-[#5F6368] hover:bg-[#F1F3F4] shrink-0 transition-all">Referrals (<span id="count-referral">6</span>)</button>
+            <button onclick="setCensusFilter('oncall')" id="cfilter-oncall" class="px-3 py-1 rounded-full text-[#5F6368] hover:bg-[#F1F3F4] shrink-0 transition-all">On-Call</button>
+            <button onclick="setCensusFilter('discharged')" id="cfilter-discharged" class="px-3 py-1 rounded-full text-[#5F6368] hover:bg-[#F1F3F4] shrink-0 transition-all">Discharged</button>
+          </div>
+        </div>
+
+        <!-- Grouping Header Bar -->
+        <div class="px-4 py-1.5 bg-[#F1F3F4] flex items-center justify-between text-[11px] text-[#5F6368] shrink-0 border-b border-[#E8EAED]">
+          <span class="flex items-center gap-1.5 font-medium text-[#3C4043]">
+            <svg class="w-3.5 h-3.5 text-[#1A73E8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            Grouped by Floor &amp; Ward
+          </span>
+          <span onclick="navTo('work')" class="text-[#D93025] font-semibold cursor-pointer hover:underline"><span id="total-pending-badge">5</span> Tasks Due</span>
+        </div>
+
+        <!-- Dynamic Inpatient Census Cards List -->
+        <div id="census-list-container" class="flex-1 overflow-y-auto px-3.5 py-3 space-y-3.5">
+          <!-- Rendered via JS renderCensus() -->
+        </div>
+
+        <!-- Quick Capture Bottom Bar with Google FAB -->
+        <div class="p-3 bg-white border-t border-[#E0E2E6] flex items-center justify-between shrink-0">
+          <button onclick="navTo('capture')" class="flex-1 mr-2.5 py-2.5 px-4 bg-[#F1F3F4] hover:bg-[#E8EAED] rounded-full text-xs text-[#5F6368] flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"/></svg>
+            <span class="truncate">Spoken rounds note or WhatsApp paste...</span>
+          </button>
+          <button onclick="openModal('modal-admit')" title="Admit Patient" class="w-11 h-11 bg-[#1A73E8] hover:bg-[#1557B0] text-white rounded-2xl flex items-center justify-center font-bold google-fab-shadow shrink-0 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SCREEN 2: WARD-CENTRIC ROUNDS QUEUE -->
+      <!-- ========================================================================= -->
+      <div id="screen-work" class="screen hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+        
+        <!-- Queue App Bar -->
+        <div class="px-4 pt-3 pb-2.5 bg-white border-b border-[#E0E2E6] shrink-0">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h2 class="text-base font-bold text-[#202124] leading-tight">Rounds Work Queue</h2>
+              <p class="text-[11px] text-[#5F6368]">Tasks by Floor &bull; <span id="queue-count">7</span> Pending</p>
+            </div>
+            <span class="px-2.5 py-0.5 text-xs font-bold bg-[#FCE8E6] text-[#D93025] rounded-full border border-[#FAD2CF]">2 Overdue</span>
+          </div>
+
+          <!-- Queue Filter Tabs -->
+          <div class="flex items-center gap-1.5 py-0.5 text-xs font-medium">
+            <button onclick="setQueueFilter('ward')" id="qfilter-ward" class="px-3.5 py-1 rounded-full text-[#1A73E8] bg-[#E8F0FE] font-semibold">By Floor / Ward</button>
+            <button onclick="setQueueFilter('time')" id="qfilter-time" class="px-3.5 py-1 rounded-full text-[#5F6368] hover:bg-[#F1F3F4]">By Due Time</button>
+            <button onclick="setQueueFilter('awaiting')" id="qfilter-awaiting" class="px-3.5 py-1 rounded-full text-[#5F6368] hover:bg-[#F1F3F4]">Awaiting Reports</button>
+          </div>
+        </div>
+
+        <!-- Task List Scrollable Container -->
+        <div id="queue-list-container" class="flex-1 overflow-y-auto px-3.5 py-3 space-y-3.5">
+          <!-- Rendered via JS renderQueue() -->
+        </div>
+
+        <!-- Bottom Summary Bar -->
+        <div class="p-3 bg-white border-t border-[#E0E2E6] flex items-center justify-between text-xs text-[#5F6368] shrink-0">
+          <span>Tip: Complete floor items before taking stairs.</span>
+          <button onclick="openModal('modal-add-task')" class="px-3 py-1.5 bg-[#E8F0FE] text-[#1A73E8] rounded-xl font-semibold hover:bg-[#D2E3FC]">+ New Task</button>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SCREEN 3: PATIENT INPATIENT HUB (DOSSIER) -->
+      <!-- ========================================================================= -->
+      <div id="screen-patient" class="screen hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+        
+        <!-- Persistent Patient Header -->
+        <div class="px-4 pt-3 pb-2.5 bg-white border-b border-[#E0E2E6] shrink-0">
+          <div class="flex items-center justify-between mb-1">
+            <button onclick="navTo('census')" class="text-xs text-[#1A73E8] flex items-center gap-1 font-semibold hover:underline">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              Census
+            </button>
+            <span class="text-[10px] text-[#5F6368]" id="hub-uhid">UHID: 9823102 &bull; IP-44021</span>
+          </div>
+
+          <div class="flex items-start justify-between mt-1">
+            <div>
+              <h2 class="text-base font-bold text-[#202124]" id="hub-name">Rajesh Kumar</h2>
+              <p class="text-xs text-[#5F6368]" id="hub-meta">54 Yrs &bull; Male &bull; Primary Team: Dr. Ankita</p>
+            </div>
+            <div class="text-right">
+              <span id="hub-bed" class="px-2.5 py-0.5 bg-[#FEF7E0] text-[#B06000] border border-[#FCE8B2] text-xs font-bold rounded-lg block">
+                ICU &bull; Bed 04
+              </span>
+              <span id="hub-admitted" class="text-[10px] text-[#5F6368] mt-0.5 block">Day 3 Admitted</span>
+            </div>
+          </div>
+
+          <!-- Transfer Location Alert Banner -->
+          <div class="mt-2.5 px-3 py-1.5 bg-[#FEF7E0] border border-[#FCE8B2] rounded-xl flex items-center justify-between text-[11px] text-[#B06000]">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-[#F9AB00]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              <span id="hub-transfer-info">Transferred from Ward 2 yesterday at 18:00</span>
+            </span>
+            <button onclick="openModal('modal-transfer')" class="underline font-bold text-[#B06000]">Move Bed</button>
+          </div>
+
+          <!-- Patient Hub Navigation Tabs -->
+          <div class="flex items-center gap-3 mt-3 overflow-x-auto text-xs font-medium text-[#5F6368] border-b border-[#F1F3F4] pb-0.5 no-scrollbar">
+            <button onclick="switchPatientTab('overview')" id="ptab-overview" class="text-[#1A73E8] font-bold border-b-2 border-[#1A73E8] pb-1.5 shrink-0">Overview</button>
+            <button onclick="switchPatientTab('timeline')" id="ptab-timeline" class="hover:text-[#202124] pb-1.5 shrink-0">Timeline (<span id="hub-timeline-count">3</span>)</button>
+            <button onclick="switchPatientTab('meds')" id="ptab-meds" class="hover:text-[#202124] pb-1.5 shrink-0">Medications (<span id="hub-meds-count">3</span>)</button>
+            <button onclick="switchPatientTab('tasks')" id="ptab-tasks" class="hover:text-[#202124] pb-1.5 shrink-0">Tasks (<span id="hub-tasks-count">2</span>)</button>
+            <button onclick="switchPatientTab('reports')" id="ptab-reports" class="hover:text-[#202124] pb-1.5 shrink-0">Reports &amp; Labs</button>
+          </div>
+        </div>
+
+        <!-- Patient Tab Content Scrollable -->
+        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+          
+          <!-- TAB 1: OVERVIEW -->
+          <div id="pcontent-overview" class="space-y-3">
+            
+            <!-- Active Clinical Problems -->
+            <div class="bg-white border border-[#E0E2E6] rounded-2xl p-3.5 google-shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-[#5F6368]">Active Clinical Problems</h3>
+                <span class="text-[10px] text-[#1A73E8] font-medium cursor-pointer">+ Problem</span>
+              </div>
+              <div class="space-y-2" id="hub-problems-list">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- Treatment Plan & Rounds Summary -->
+            <div class="bg-white border border-[#E0E2E6] rounded-2xl p-3.5 google-shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-[#5F6368]">Current Plan &bull; Rounds 08:30</h3>
+                <span class="text-[10px] text-[#1A73E8] font-medium">By Dr. Ankita</span>
+              </div>
+              <ul class="text-xs text-[#3C4043] space-y-1.5 list-disc list-inside">
+                <li>IV Meropenem 1g TDS + IV Vancomycin (renal-adjusted).</li>
+                <li>Wean Noradrenaline as MAP &gt; 65 mmHg holds.</li>
+                <li><strong class="text-[#D93025]">HELD:</strong> Metformin &amp; Telmisartan due to AKI.</li>
+                <li>Target urine &gt; 35 ml/hr. Repeat ABG + K+ at 10:30 AM.</li>
+              </ul>
+            </div>
+
+            <!-- Specialist Consult Card -->
+            <div class="bg-white border border-[#D2E3FC] rounded-2xl p-3.5 google-shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-[#1A73E8] flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                  Cardiology Referral Advice
+                </span>
+                <span class="text-[10px] bg-[#E8F0FE] text-[#1A73E8] px-2 py-0.5 rounded-full font-medium">Dr. Sharma</span>
+              </div>
+              <p class="text-xs text-[#3C4043] mt-1.5 italic">"Echo shows EF 50%, no RWMA. Fluid restrict after initial resuscitation."</p>
+              <div class="mt-2 pt-2 border-t border-[#F1F3F4] flex items-center justify-between text-[11px]">
+                <span class="text-[#5F6368]">Sister Priya Informed: Yes</span>
+                <span class="text-[#137333] font-semibold">&check; In Plan</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: TIMELINE (HOSPITAL COURSE) -->
+          <div id="pcontent-timeline" class="hidden space-y-2.5">
+            <div class="border-l-2 border-[#1A73E8] pl-3 ml-2 space-y-3" id="hub-timeline-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 3: MEDICATIONS -->
+          <div id="pcontent-meds" class="hidden space-y-2.5">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-[#5F6368]">Prescription &bull; Orders vs Administered</span>
+              <button onclick="openModal('modal-add-med')" class="text-xs text-[#1A73E8] font-semibold hover:underline">+ New Order</button>
+            </div>
+            <div id="hub-meds-list" class="space-y-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 4: TASKS -->
+          <div id="pcontent-tasks" class="hidden space-y-2.5">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-[#5F6368]">Patient-Specific Tasks</span>
+              <button onclick="openModal('modal-add-task')" class="text-xs text-[#1A73E8] font-semibold hover:underline">+ Add Task</button>
+            </div>
+            <div id="hub-tasks-list" class="space-y-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 5: REPORTS & LABS -->
+          <div id="pcontent-reports" class="hidden space-y-3">
+            <div class="bg-white border border-[#E0E2E6] rounded-2xl p-3 google-shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-[#202124]">Renal &amp; Electrolytes Trend</span>
+                <span class="text-[10px] text-[#1A73E8] font-semibold">Latest 06:00 AM</span>
+              </div>
+              <table class="w-full text-xs text-left">
+                <thead>
+                  <tr class="text-[10px] text-[#5F6368] border-b border-[#F1F3F4]">
+                    <th class="pb-1">Test</th>
+                    <th class="pb-1">Day 1</th>
+                    <th class="pb-1">Day 2</th>
+                    <th class="pb-1">Today</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[#F1F3F4] text-[11px]">
+                  <tr>
+                    <td class="py-1.5 font-medium">S. Creatinine</td>
+                    <td>1.2</td>
+                    <td class="text-[#D93025] font-bold">2.4 &uarr;</td>
+                    <td class="text-[#B06000] font-bold">2.1 &darr;</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1.5 font-medium">Potassium (K+)</td>
+                    <td>4.1</td>
+                    <td class="text-[#D93025] font-bold">5.4 &uarr;</td>
+                    <td class="text-[#137333] font-bold">4.8</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1.5 font-medium">Total Leucocytes</td>
+                    <td>14,500</td>
+                    <td>16,200</td>
+                    <td class="text-[#137333]">12,800</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Attached Scans & PDFs -->
+            <div class="bg-white border border-[#E0E2E6] rounded-2xl p-3 google-shadow-sm">
+              <span class="text-xs font-bold text-[#202124] block mb-2">Scanned Reports &amp; Imaging</span>
+              <div class="space-y-2">
+                <div onclick="viewReport('Chest X-Ray (Bedside PA)', '2026-09-18', 'Bilateral lower lobe infiltrates, no pneumothorax.')" 
+                  class="flex items-center justify-between p-2 bg-[#F8F9FA] hover:bg-[#E8F0FE] rounded-xl border border-[#E8EAED] cursor-pointer transition-all">
+                  <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 bg-[#E8F0FE] text-[#1A73E8] rounded-lg flex items-center justify-center text-xs font-bold">IMG</span>
+                    <div>
+                      <span class="text-xs font-semibold text-[#202124] block">Chest X-Ray (Bedside PA)</span>
+                      <span class="text-[10px] text-[#5F6368]">2026-09-18 &bull; Radiologist: Dr. Sen</span>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-[#1A73E8] font-medium">View &rarr;</span>
+                </div>
+                <div onclick="viewReport('2D Echocardiography', '2026-09-19', 'LVEF 50%, no RWMA, mild MR.')" 
+                  class="flex items-center justify-between p-2 bg-[#F8F9FA] hover:bg-[#E8F0FE] rounded-xl border border-[#E8EAED] cursor-pointer transition-all">
+                  <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 bg-[#FCE8E6] text-[#D93025] rounded-lg flex items-center justify-center text-xs font-bold">PDF</span>
+                    <div>
+                      <span class="text-xs font-semibold text-[#202124] block">2D Echocardiography</span>
+                      <span class="text-[10px] text-[#5F6368]">2026-09-19 &bull; Cardiology</span>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-[#1A73E8] font-medium">View &rarr;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Action Buttons in Patient Hub -->
+        <div class="p-3 bg-white border-t border-[#E0E2E6] flex items-center justify-between gap-2 shrink-0">
+          <button onclick="openModal('modal-round-note')" class="flex-1 py-2.5 bg-[#F1F3F4] hover:bg-[#E8EAED] rounded-xl text-xs font-semibold text-[#202124]">
+            + Bedside Review
+          </button>
+          <button onclick="openModal('modal-add-task')" class="flex-1 py-2.5 bg-[#1A73E8] hover:bg-[#1557B0] text-white rounded-xl text-xs font-semibold shadow-sm">
+            + Order / Task
+          </button>
+          <button onclick="navTo('handover')" class="px-3.5 py-2.5 bg-[#F1F3F4] hover:bg-[#E8EAED] rounded-xl text-xs font-semibold text-[#1A73E8]">
+            Handover
+          </button>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SCREEN 4: AI QUICK CAPTURE & ACTION GATE -->
+      <!-- ========================================================================= -->
+      <div id="screen-capture" class="screen hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+        
+        <!-- Header -->
+        <div class="px-4 pt-3 pb-2.5 bg-white border-b border-[#E0E2E6] shrink-0">
+          <div class="flex items-center justify-between">
+            <button onclick="navTo('census')" class="text-xs text-[#1A73E8] flex items-center gap-1 font-semibold hover:underline">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              Census
+            </button>
+            <span class="text-xs font-bold text-[#202124]">AI Quick Capture &amp; Staging Gate</span>
+            <span class="w-4"></span>
+          </div>
+        </div>
+
+        <!-- Scrollable Capture Container -->
+        <div class="p-4 flex-1 overflow-y-auto space-y-3.5">
+          
+          <!-- Input Box -->
+          <div class="bg-white p-3.5 rounded-2xl border border-[#E0E2E6] google-shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-[#202124]">Clinician Input / Dictation</span>
+              <span class="text-[10px] bg-[#E8F0FE] text-[#1A73E8] px-2 py-0.5 rounded-full font-bold">Preset 1 Loaded</span>
+            </div>
+            <textarea id="ai-input-text" rows="3" class="w-full text-xs text-[#202124] p-2.5 bg-[#F8F9FA] rounded-xl border border-[#E8EAED] focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#1A73E8]">Patient transferred to ICU Bed 04. Stop Ceftriaxone. Start Meropenem 1g IV TDS, adjust for creatinine. Check repeat potassium and urine output in 4 hours.</textarea>
+            
+            <!-- Input Helper Buttons -->
+            <div class="mt-2.5 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-1.5">
+                <button onclick="loadAiPreset('preset-icu')" class="px-2 py-1 bg-[#F1F3F4] hover:bg-[#E8EAED] text-[10px] rounded-lg text-[#5F6368]">ICU Transfer</button>
+                <button onclick="loadAiPreset('preset-nurse')" class="px-2 py-1 bg-[#F1F3F4] hover:bg-[#E8EAED] text-[10px] rounded-lg text-[#5F6368]">Nurse Query</button>
+              </div>
+              <button onclick="reparseAi()" class="px-3 py-1 bg-[#E8F0FE] text-[#1A73E8] rounded-lg font-semibold hover:bg-[#D2E3FC]">Parse with AI</button>
+            </div>
+          </div>
+
+          <!-- HUMAN-IN-THE-LOOP PROPOSAL CARD -->
+          <div class="bg-white border-2 border-[#1A73E8] rounded-2xl p-4 google-shadow-md">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-[#1A73E8] uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Proposed Care Model Changes
+              </span>
+              <span class="text-[10px] bg-[#FCE8E6] text-[#D93025] px-2 py-0.5 rounded-full font-bold">Review Required</span>
+            </div>
+
+            <p class="text-[11px] text-[#5F6368] mb-3">Uncheck any item you do not wish to execute:</p>
+
+            <!-- Checkbox Actions -->
+            <div class="space-y-2 text-xs" id="ai-actions-container">
+              
+              <label class="flex items-start gap-2.5 p-2.5 bg-[#F8F9FA] hover:bg-[#F1F3F4] rounded-xl border border-[#E0E2E6] cursor-pointer transition-all">
+                <input type="checkbox" id="ai-chk-1" checked class="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8]">
+                <div class="flex-1">
+                  <span class="font-bold text-[#202124] block">1. Physical Bed Transfer</span>
+                  <span class="text-[11px] text-[#5F6368]">Move to <strong class="text-[#1A73E8]">ICU Bed 04</strong> (Effective immediately).</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2.5 p-2.5 bg-[#F8F9FA] hover:bg-[#F1F3F4] rounded-xl border border-[#E0E2E6] cursor-pointer transition-all">
+                <input type="checkbox" id="ai-chk-2" checked class="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8]">
+                <div class="flex-1">
+                  <span class="font-bold text-[#D93025] block">2. Discontinue Medication Order</span>
+                  <span class="text-[11px] text-[#5F6368]">Stop <strong>Ceftriaxone</strong> (Reason: antibiotic escalation).</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2.5 p-2.5 bg-[#F8F9FA] hover:bg-[#F1F3F4] rounded-xl border border-[#E0E2E6] cursor-pointer transition-all">
+                <input type="checkbox" id="ai-chk-3" checked class="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8]">
+                <div class="flex-1">
+                  <span class="font-bold text-[#137333] block">3. New Medication Order</span>
+                  <span class="text-[11px] text-[#5F6368]"><strong>Meropenem 1g</strong> IV TDS (Adjusted for creatinine).</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-2.5 p-2.5 bg-[#F8F9FA] hover:bg-[#F1F3F4] rounded-xl border border-[#E0E2E6] cursor-pointer transition-all">
+                <input type="checkbox" id="ai-chk-4" checked class="mt-0.5 rounded border-[#DADCE0] text-[#1A73E8] focus:ring-[#1A73E8]">
+                <div class="flex-1">
+                  <span class="font-bold text-[#B06000] block">4. Timed Task &amp; Alarm</span>
+                  <span class="text-[11px] text-[#5F6368]">Check K+ &amp; urine at <strong class="text-[#B06000]">12:30 PM (in 4 hours)</strong>.</span>
+                </div>
+              </label>
+
+            </div>
+
+            <!-- SQLCipher & Audit Footnote -->
+            <div class="mt-3 flex items-center gap-1.5 text-[10px] text-[#5F6368]">
+              <svg class="w-3.5 h-3.5 text-[#FBBC04] shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+              <span>Executed via CareCommandService with cryptographic hash &amp; revision audit.</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-3.5 pt-2.5 border-t border-[#E0E2E6] flex items-center justify-between gap-2">
+              <button onclick="navTo('census')" class="px-3.5 py-2 text-xs text-[#5F6368] hover:text-[#202124] font-medium">Discard</button>
+              <button onclick="commitAiChanges()" class="flex-1 py-2.5 bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                Confirm &amp; Commit to Record
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SCREEN 5: REFERRAL & UNASSIGNED INBOX -->
+      <!-- ========================================================================= -->
+      <div id="screen-inbox" class="screen hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+        
+        <!-- App Bar -->
+        <div class="px-4 pt-3 pb-2.5 bg-white border-b border-[#E0E2E6] shrink-0">
+          <div class="flex items-center justify-between mb-1">
+            <div>
+              <h2 class="text-base font-bold text-[#202124] leading-tight">Referral &amp; Intake Triage</h2>
+              <p class="text-[11px] text-[#5F6368]">Informal requests &bull; <span id="inbox-count">2</span> Unresolved</p>
+            </div>
+            <span class="px-2 py-0.5 text-xs font-bold bg-[#F3E8FD] text-[#7627BB] rounded-full">Doctor's Inbox</span>
+          </div>
+        </div>
+
+        <!-- Inbox Items -->
+        <div class="p-4 flex-1 overflow-y-auto space-y-3" id="inbox-list-container">
+          
+          <!-- Unassigned Item 1 -->
+          <div class="bg-white border-l-4 border-l-[#F9AB00] border-y border-r border-[#E0E2E6] rounded-2xl p-3.5 google-shadow-sm">
+            <div class="flex items-start justify-between">
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-[#FEF7E0] text-[#B06000] rounded">WhatsApp Message</span>
+              <span class="text-[10px] text-[#5F6368]">Today, 08:15 AM</span>
+            </div>
+            <p class="text-xs text-[#202124] mt-2 font-medium italic bg-[#F8F9FA] p-2 rounded-lg border border-[#E8EAED]">
+              "Dr Ankita, medicine opinion needed in ICU Bed 12 for persistent metabolic acidosis. Post-laparotomy day 1. - Dr. Sharma (Surgery)"
+            </p>
+            <div class="mt-2 text-[11px] text-[#5F6368]">
+              <span>Hints: ICU Bed 12 &bull; Requester: Dr. Sharma &bull; Priority: Urgent</span>
+            </div>
+            <div class="mt-3 pt-2 border-t border-[#F1F3F4] flex items-center justify-end gap-2">
+              <button onclick="resolveIntake(1)" class="px-3 py-1.5 bg-[#1A73E8] text-white text-xs rounded-xl font-semibold hover:bg-[#1557B0]">Link to Inpatient</button>
+            </div>
+          </div>
+
+          <!-- Unassigned Item 2 -->
+          <div class="bg-white border-l-4 border-l-[#1A73E8] border-y border-r border-[#E0E2E6] rounded-2xl p-3.5 google-shadow-sm">
+            <div class="flex items-start justify-between">
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-[#E8F0FE] text-[#1A73E8] rounded">Nurse Call Log</span>
+              <span class="text-[10px] text-[#5F6368]">Today, 07:45 AM</span>
+            </div>
+            <p class="text-xs text-[#202124] mt-2 font-medium bg-[#F8F9FA] p-2 rounded-lg border border-[#E8EAED]">
+              "Sister Mary (Ward 5): Bed 512 has high blood pressure 180/100. Should she give sublingual nifedipine?"
+            </p>
+            <div class="mt-3 pt-2 border-t border-[#F1F3F4] flex items-center justify-end gap-2">
+              <button onclick="resolveIntake(2)" class="px-3 py-1.5 bg-[#E8F0FE] text-[#1A73E8] text-xs rounded-xl font-semibold hover:bg-[#D2E3FC]">Record Decision</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- SCREEN 6: SHIFT HANDOVER & SUMMARY -->
+      <!-- ========================================================================= -->
+      <div id="screen-handover" class="screen hidden flex-1 flex flex-col overflow-hidden bg-[#F8F9FA]">
+        
+        <!-- Header -->
+        <div class="px-4 pt-3 pb-2.5 bg-white border-b border-[#E0E2E6] shrink-0">
+          <div class="flex items-center justify-between">
+            <button onclick="navTo('census')" class="text-xs text-[#1A73E8] flex items-center gap-1 font-semibold hover:underline">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              Census
+            </button>
+            <span class="text-xs font-bold text-[#202124]">Shift Handover Generator</span>
+            <span class="text-[10px] text-[#5F6368]">Evening / Night</span>
+          </div>
+        </div>
+
+        <!-- Handover Scrollable -->
+        <div class="p-4 flex-1 overflow-y-auto space-y-3">
+          
+          <div class="bg-white p-3.5 rounded-2xl border border-[#E0E2E6] google-shadow-sm">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-[#202124]">Cross-Cover &bull; Dr. Ramesh (Night Duty)</span>
+              <span class="text-[10px] bg-[#E8F0FE] text-[#1A73E8] px-2 py-0.5 rounded-full font-bold">Auto-Compiled</span>
+            </div>
+            <p class="text-[11px] text-[#5F6368]">Synthesized from today's confirmed clinical events, ICU transfers, and open tasks.</p>
+          </div>
+
+          <!-- Handover Message Preview Area -->
+          <div class="bg-white border border-[#E0E2E6] rounded-2xl p-3.5 google-shadow-sm text-xs space-y-3">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#D93025]">High Attention Patient (1)</span>
+              <div class="mt-1 bg-[#F8F9FA] p-3 rounded-xl border border-[#E8EAED]">
+                <div class="flex items-center justify-between font-bold text-[#202124]">
+                  <span>ICU Bed 04: Rajesh Kumar (54M)</span>
+                  <span class="text-[#D93025] text-[10px]">Sepsis / AKI</span>
+                </div>
+                <p class="text-[#3C4043] mt-1 text-[11px] leading-relaxed">
+                  &bull; Transferred to ICU yesterday evening for respiratory distress.<br>
+                  &bull; Antibiotics: Meropenem (Day 1). Ceftriaxone stopped.<br>
+                  &bull; Norad weaning off (MAP &gt; 65).<br>
+                  &bull; <strong class="text-[#B06000]">PENDING:</strong> Repeat ABG at 22:00. If urine &lt; 30ml/hr for 2h, alert Dr. Ankita.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#1A73E8]">Stable Inpatients (Ward 4)</span>
+              <div class="mt-1 bg-[#F8F9FA] p-3 rounded-xl border border-[#E8EAED] space-y-1.5 text-[11px] text-[#3C4043]">
+                <p><strong>Bed 402: Meenakshi S.</strong> &bull; Ortho referral fever. Blood c/s pending. Pip-Taz started. Stable.</p>
+                <p><strong>Bed 409: Sunita Patel</strong> &bull; Cellulitis resolving. Discharge planned tomorrow morning.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Share & Export Buttons -->
+          <div class="bg-white p-3 rounded-2xl border border-[#E0E2E6] flex items-center justify-between gap-2 shrink-0">
+            <button onclick="copyHandoverWhatsApp()" class="flex-1 py-2.5 bg-[#1A73E8] hover:bg-[#1557B0] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              Copy for WhatsApp
+            </button>
+            <button onclick="openModal('modal-pdf-preview')" class="px-4 py-2.5 bg-[#F1F3F4] hover:bg-[#E8EAED] text-[#444746] text-xs rounded-xl font-semibold">
+              PDF Sheet
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- MATERIAL 3 BOTTOM NAVIGATION BAR (GOOGLE NATIVE PILL STYLE) -->
+      <!-- ========================================================================= -->
+      <nav class="h-16 bg-white border-t border-[#E0E2E6] px-3 flex items-center justify-around text-[#5F6368] shrink-0 z-20">
+        
+        <!-- Tab 1: Census -->
+        <button onclick="navTo('census')" id="nav-census" class="flex flex-col items-center gap-0.5 text-[#1A73E8]">
+          <div id="pill-census" class="px-3 py-1 rounded-full bg-[#E8F0FE] transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <span class="text-[10px] font-bold">Census</span>
+        </button>
+
+        <!-- Tab 2: Rounds Queue -->
+        <button onclick="navTo('work')" id="nav-work" class="flex flex-col items-center gap-0.5 hover:text-[#202124]">
+          <div id="pill-work" class="px-3 py-1 rounded-full transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          </div>
+          <span class="text-[10px] font-medium">Rounds</span>
+        </button>
+
+        <!-- Tab 3: AI Gate -->
+        <button onclick="navTo('capture')" id="nav-capture" class="flex flex-col items-center gap-0.5 hover:text-[#202124]">
+          <div id="pill-capture" class="px-3 py-1 rounded-full transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <span class="text-[10px] font-medium">AI Gate</span>
+        </button>
+
+        <!-- Tab 4: Referral Inbox -->
+        <button onclick="navTo('inbox')" id="nav-inbox" class="flex flex-col items-center gap-0.5 hover:text-[#202124]">
+          <div id="pill-inbox" class="px-3 py-1 rounded-full transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+          </div>
+          <span class="text-[10px] font-medium">Inbox</span>
+        </button>
+
+        <!-- Tab 5: Handover -->
+        <button onclick="navTo('handover')" id="nav-handover" class="flex flex-col items-center gap-0.5 hover:text-[#202124]">
+          <div id="pill-handover" class="px-3 py-1 rounded-full transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-[10px] font-medium">Handover</span>
+        </button>
+
+      </nav>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- DESKTOP WORKSPACE / COMPANION GUIDE -->
+    <!-- ========================================================================= -->
+    <div class="w-full lg:flex-1 space-y-4 max-w-xl">
+      
+      <!-- Live Controls Guide -->
+      <div class="bg-white border border-[#DADCE0] rounded-2xl p-5 google-shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-base font-bold text-[#202124] flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#1A73E8]"></span>
+            Live Prototype Capabilities
+          </h2>
+          <span class="text-[11px] bg-[#E8F0FE] text-[#1A73E8] px-2.5 py-0.5 rounded-full font-bold">Try In Mockup</span>
+        </div>
+        
+        <p class="text-xs text-[#5F6368] leading-relaxed mb-3">
+          Every screen in the phone simulation is fully dynamic and interconnected. You can perform real clinical workflows:
+        </p>
+
+        <div class="space-y-2.5 text-xs text-[#3C4043]">
+          <div class="p-2.5 bg-[#F8F9FA] rounded-xl border border-[#E8EAED]">
+            <strong class="text-[#1A73E8] block mb-0.5">1. Interactive Inpatient Census</strong>
+            <span class="text-[11px] text-[#5F6368]">Type into the search bar to filter patients in real time. Switch tabs (Primary, Referral, Discharged) to test the census filter. Click any patient card to open their full clinical hub.</span>
+          </div>
+
+          <div class="p-2.5 bg-[#F8F9FA] rounded-xl border border-[#E8EAED]">
+            <strong class="text-[#1A73E8] block mb-0.5">2. Actionable Rounds Queue</strong>
+            <span class="text-[11px] text-[#5F6368]">Click "Done + Note" on any pending task. It immediately marks the task complete, deducts the pending badge, and updates the census in memory!</span>
+          </div>
+
+          <div class="p-2.5 bg-[#F8F9FA] rounded-xl border border-[#E8EAED]">
+            <strong class="text-[#1A73E8] block mb-0.5">3. Human-in-the-Loop AI Gate</strong>
+            <span class="text-[11px] text-[#5F6368]">Go to "AI Gate", click "Confirm &amp; Commit". Watch the four staged atomic actions commit to the patient's record and appear in the timeline!</span>
+          </div>
+
+          <div class="p-2.5 bg-[#F8F9FA] rounded-xl border border-[#E8EAED]">
+            <strong class="text-[#1A73E8] block mb-0.5">4. Modals &amp; Bed Transfers</strong>
+            <span class="text-[11px] text-[#5F6368]">Click "+ Admit" (top right) to admit a new patient, or "Move Bed" on the patient hub to simulate transferring a patient between wards.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons on Desktop Side -->
+      <div class="bg-white border border-[#DADCE0] rounded-2xl p-5 google-shadow-sm">
+        <h3 class="text-sm font-bold text-[#202124] mb-2.5">Quick Workflow Demonstrations</h3>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button onclick="navTo('census')" class="p-2.5 bg-[#F1F3F4] hover:bg-[#E8EAED] rounded-xl text-left font-medium text-[#202124]">
+            &bull; View Ward Census
+          </button>
+          <button onclick="navTo('work')" class="p-2.5 bg-[#F1F3F4] hover:bg-[#E8EAED] rounded-xl text-left font-medium text-[#202124]">
+            &bull; Open Rounds Queue
+          </button>
+          <button onclick="selectPatient('p1')" class="p-2.5 bg-[#F1F3F4] hover:bg-[#E8EAED] rounded-xl text-left font-medium text-[#202124]">
+            &bull; Open Rajesh Kumar (ICU)
+          </button>
+          <button onclick="selectPatient('p3')" class="p-2.5 bg-[#F1F3F4] hover:bg-[#E8EAED] rounded-xl text-left font-medium text-[#202124]">
+            &bull; Open Ortho Referral
+          </button>
+          <button onclick="openModal('modal-admit')" class="p-2.5 bg-[#E8F0FE] hover:bg-[#D2E3FC] rounded-xl text-left font-semibold text-[#1A73E8]">
+            + Admit Inpatient Modal
+          </button>
+          <button onclick="navTo('handover')" class="p-2.5 bg-[#E8F0FE] hover:bg-[#D2E3FC] rounded-xl text-left font-semibold text-[#1A73E8]">
+            &bull; View Shift Handover
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL DIALOGS (GOOGLE MATERIAL 3 STYLE) -->
+  <!-- ========================================================================= -->
+
+  <!-- Modal 1: Admit New Inpatient -->
+  <div id="modal-admit" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[28px] p-5 google-shadow-lg border border-[#DADCE0]">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-bold text-[#202124]">Admit Inpatient</h3>
+        <button onclick="closeModal('modal-admit')" class="text-sm text-[#5F6368] hover:text-[#202124]">&times;</button>
+      </div>
+      <form onsubmit="handleAdmitSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">Patient Full Name</label>
+          <input type="text" id="admit-name" required placeholder="e.g. Ramesh Patel" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] focus:bg-white focus:ring-2 focus:ring-[#1A73E8]">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[#5F6368] font-medium mb-1">Age &amp; Sex</label>
+            <input type="text" id="admit-agesex" required placeholder="e.g. 48 M" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] focus:bg-white focus:ring-2 focus:ring-[#1A73E8]">
+          </div>
+          <div>
+            <label class="block text-[#5F6368] font-medium mb-1">UHID / Hospital ID</label>
+            <input type="text" id="admit-uhid" required placeholder="e.g. 98402" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0] focus:bg-white focus:ring-2 focus:ring-[#1A73E8]">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[#5F6368] font-medium mb-1">Ward / Floor</label>
+            <select id="admit-ward" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+              <option value="ICU • Floor 3">ICU (Floor 3)</option>
+              <option value="Ward 4 • Female Med">Ward 4 (Female Med)</option>
+              <option value="Ward 5 • Male Med">Ward 5 (Male Med)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[#5F6368] font-medium mb-1">Bed Number</label>
+            <input type="text" id="admit-bed" required placeholder="e.g. Bed 12" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">Primary Diagnosis / Presenting Problem</label>
+          <input type="text" id="admit-diag" required placeholder="e.g. Acute Gastroenteritis with Dehydration" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+        </div>
+        <div class="pt-3 border-t border-[#F1F3F4] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-admit')" class="px-3.5 py-2 text-xs text-[#5F6368] font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-[#1A73E8] hover:bg-[#1557B0] text-white rounded-xl font-semibold shadow-sm">Save &amp; Open Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Bed Transfer -->
+  <div id="modal-transfer" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[28px] p-5 google-shadow-lg border border-[#DADCE0]">
+      <h3 class="text-base font-bold text-[#202124] mb-1">Transfer Patient Bed</h3>
+      <p class="text-xs text-[#5F6368] mb-3">Record physical location transfer for <strong id="transfer-modal-patient" class="text-[#202124]">Rajesh Kumar</strong>.</p>
+      
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">Destination Ward</label>
+          <select id="transfer-dest-ward" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+            <option value="Ward 4 • Female Med">Ward 4 (Step-down Floor 4)</option>
+            <option value="Ward 5 • Male Med">Ward 5 (Male Medicine Floor 5)</option>
+            <option value="ICU • Floor 3">ICU (Floor 3)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">New Bed Code</label>
+          <input type="text" id="transfer-dest-bed" value="Bed 410" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+        </div>
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">Transfer Rationale</label>
+          <input type="text" id="transfer-reason" value="Respiratory distress resolved, step-down to ward" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-[#F1F3F4] flex items-center justify-end gap-2 text-xs">
+        <button onclick="closeModal('modal-transfer')" class="px-3 py-2 text-[#5F6368] font-medium">Cancel</button>
+        <button onclick="executeTransfer()" class="px-4 py-2 bg-[#1A73E8] text-white font-semibold rounded-xl shadow-sm">Confirm Transfer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Bedside Rounds Note -->
+  <div id="modal-round-note" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[28px] p-5 google-shadow-lg border border-[#DADCE0]">
+      <h3 class="text-base font-bold text-[#202124] mb-1">+ Bedside Review Note</h3>
+      <p class="text-xs text-[#5F6368] mb-3">Encounter time: Today, 09:45 AM &bull; Dr. Ankita</p>
+      
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">Observations &amp; Examination</label>
+          <textarea id="round-note-text" rows="3" placeholder="e.g. Chest clear, abdomen soft, no edema. Vitals stable." class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]"></textarea>
+        </div>
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">Plan Updates</label>
+          <input type="text" id="round-plan-text" placeholder="e.g. Continue antibiotics, mobilize today" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-[#F1F3F4] flex items-center justify-end gap-2 text-xs">
+        <button onclick="closeModal('modal-round-note')" class="px-3 py-2 text-[#5F6368] font-medium">Cancel</button>
+        <button onclick="saveRoundNote()" class="px-4 py-2 bg-[#1A73E8] text-white font-semibold rounded-xl shadow-sm">Save to Timeline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Report Viewer -->
+  <div id="modal-report-view" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[28px] p-5 google-shadow-lg border border-[#DADCE0]">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <h3 class="text-base font-bold text-[#202124]" id="rep-modal-title">Chest X-Ray PA View</h3>
+          <span class="text-[10px] text-[#5F6368]" id="rep-modal-date">Date: 2026-09-18</span>
+        </div>
+        <button onclick="closeModal('modal-report-view')" class="text-lg text-[#5F6368]">&times;</button>
+      </div>
+
+      <div class="my-3 p-4 bg-[#F8F9FA] rounded-2xl border border-[#E8EAED] text-center">
+        <div class="w-16 h-16 mx-auto mb-2 bg-[#E8F0FE] text-[#1A73E8] rounded-2xl flex items-center justify-center">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <span class="text-xs font-semibold text-[#202124] block">Encrypted Document (AES-256)</span>
+        <span class="text-[10px] text-[#5F6368]">Decrypted in-memory with Keystore MasterKey</span>
+      </div>
+
+      <div class="text-xs text-[#3C4043] bg-[#FEF7E0] p-3 rounded-xl border border-[#FCE8B2] mb-3">
+        <span class="font-bold text-[#B06000] block mb-0.5">Radiologist Impression:</span>
+        <p id="rep-modal-finding">Bilateral lower zone consolidation consistent with community-acquired pneumonia. Cardiac size upper normal.</p>
+      </div>
+
+      <div class="pt-2 border-t border-[#F1F3F4] flex items-center justify-end">
+        <button onclick="closeModal('modal-report-view')" class="px-4 py-2 bg-[#1A73E8] text-white text-xs font-semibold rounded-xl">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Add Task / Order -->
+  <div id="modal-add-task" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[28px] p-5 google-shadow-lg border border-[#DADCE0]">
+      <h3 class="text-base font-bold text-[#202124] mb-1">+ Add Clinical Task</h3>
+      <p class="text-xs text-[#5F6368] mb-3">Schedules a reminder &amp; appends to floor rounds.</p>
+      
+      <form onsubmit="handleAddTaskSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-[#5F6368] font-medium mb-1">Task Title / Action</label>
+          <input type="text" id="task-title" required placeholder="e.g. Check repeat potassium &amp; ECG" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[#5F6368] font-medium mb-1">Due Time</label>
+            <input type="text" id="task-time" value="14:00" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+          </div>
+          <div>
+            <label class="block text-[#5F6368] font-medium mb-1">Assignee / Role</label>
+            <input type="text" id="task-assigned" value="Sister Priya" class="w-full p-2 bg-[#F8F9FA] rounded-xl border border-[#DADCE0]">
+          </div>
+        </div>
+        <div class="pt-3 border-t border-[#F1F3F4] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-add-task')" class="px-3.5 py-2 text-xs text-[#5F6368]">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-[#1A73E8] text-white rounded-xl font-semibold shadow-sm">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 6: Shift Handover PDF Preview -->
+  <div id="modal-pdf-preview" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-[28px] p-5 google-shadow-lg border border-[#DADCE0]">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-base font-bold text-[#202124]">Clinical Handover Sheet</h3>
+        <button onclick="closeModal('modal-pdf-preview')" class="text-lg text-[#5F6368]">&times;</button>
+      </div>
+      <div class="p-3 bg-[#F8F9FA] rounded-xl border border-[#E0E2E6] text-[11px] text-[#3C4043] font-mono leading-relaxed max-h-60 overflow-y-auto">
+        MEDTRACK INPATIENT HANDOVER<br>
+        Shift: Evening / Night Coverage<br>
+        Doctor: Dr. Ankita B (Internal Medicine)<br>
+        Date: 2026-09-20 &bull; 20:00<br>
+        ----------------------------------------<br>
+        [ICU BED 04] Rajesh Kumar (54M) - SEVERE SEPSIS<br>
+        - Antibiotic: Meropenem 1g TDS (D1)<br>
+        - AKI Stage 2: K+ 4.8, urine 40ml/hr<br>
+        - ACTION: Repeat ABG at 22:00.<br>
+        ----------------------------------------<br>
+        [WARD 4 BED 402] Meenakshi S. (68F)<br>
+        - Ortho referral fever post-op knee.<br>
+        - Pip-Taz started. Cultures sent.<br>
+      </div>
+      <div class="mt-4 pt-2 border-t border-[#F1F3F4] flex items-center justify-end gap-2 text-xs">
+        <button onclick="closeModal('modal-pdf-preview')" class="px-4 py-2 bg-[#1A73E8] text-white rounded-xl font-semibold">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT STATE ENGINE & INTERACTIVE LOGIC -->
+  <!-- ========================================================================= -->
+  <script>
+    // In-memory clinical dataset representing Dr. Ankita's real inpatient census
+    const appState = {
+      currentScreen: 'census',
+      censusFilter: 'primary',
+      queueFilter: 'ward',
+      patientTab: 'overview',
+      selectedPatientId: 'p1',
+      
+      patients: [
+        {
+          id: 'p1',
+          name: 'Rajesh Kumar',
+          ageSex: '54 M',
+          uhid: '98231',
+          ipId: 'IP-44021',
+          ward: 'ICU • Floor 3',
+          bed: 'Bed 04',
+          bedStyle: 'bg-[#FEF7E0] text-[#B06000] border-[#FCE8B2]',
+          role: 'primary',
+          roleLabel: 'Primary Team',
+          acuity: 'Severe Sepsis',
+          acuityStyle: 'bg-[#FCE8E6] text-[#D93025]',
+          daysAdmitted: 3,
+          transferNote: 'Transferred from Ward 2 yesterday at 18:00',
+          nextTask: 'Check repeat ABG + K+; review Echo report',
+          nextTaskDue: 'Due 10:30 AM',
+          problems: [
+            { text: 'Severe Community Acquired Pneumonia', status: 'Confirmed', style: 'bg-[#E6F4EA] text-[#137333]' },
+            { text: 'Septic Shock (weaning Noradrenaline)', status: 'Improving', style: 'bg-[#FEF7E0] text-[#B06000]' },
+            { text: 'Acute Kidney Injury (Stage 2)', status: 'Suspected Prerenal', style: 'bg-[#FCE8E6] text-[#D93025]' }
+          ],
+          timeline: [
+            { time: 'Today, 08:30 AM', author: 'Dr. Ankita', title: 'Morning Rounds Review', text: 'Chest clearer on left, bilateral basal creps. Weaning inotropes.' },
+            { time: 'Yesterday, 18:00 PM', author: 'Dr. Ankita', title: 'Physical Transfer: Ward 2 → ICU Bed 04', text: 'Reason: Oxygen desaturation to 86% on room air.' },
+            { time: '3 Days Ago', author: 'Emergency Dept', title: 'Inpatient Admission (EP-8921)', text: 'Presented with high-grade fever, chills, purulent sputum.' }
+          ],
+          medications: [
+            { name: 'Meropenem', dose: '1g • IV • TDS (Every 8h)', status: 'Active Order', style: 'bg-[#E6F4EA] text-[#137333]', notes: 'Day 2 of 7' },
+            { name: 'Noradrenaline', dose: '0.05 mcg/kg/min IV infusion', status: 'Weaning', style: 'bg-[#FEF7E0] text-[#B06000]', notes: 'Target MAP > 65 mmHg' },
+            { name: 'Metformin', dose: '500mg • Oral • BD', status: 'HELD', style: 'bg-[#FCE8E6] text-[#D93025]', notes: 'Held by Dr. Ankita due to AKI' }
+          ],
+          tasks: [
+            { id: 't1', title: 'Check repeat ABG & serum potassium', due: 'Overdue (09:00)', nurse: 'Sister Priya', done: false, isOverdue: true },
+            { id: 't2', title: 'Review 2D Echo report with Cardiology', due: '11:00 AM', nurse: 'Dr. Sharma', done: false, isOverdue: false }
+          ]
+        },
+        {
+          id: 'p2',
+          name: 'Anita Desai',
+          ageSex: '42 F',
+          uhid: '76421',
+          ipId: 'IP-44089',
+          ward: 'ICU • Floor 3',
+          bed: 'Bed 09',
+          bedStyle: 'bg-[#F1F3F4] text-[#444746] border-[#DADCE0]',
+          role: 'primary',
+          roleLabel: 'Primary Team',
+          acuity: 'DKA (Resolving)',
+          acuityStyle: 'bg-[#E6F4EA] text-[#137333]',
+          daysAdmitted: 2,
+          transferNote: 'Step-down to Ward 4 planned for afternoon',
+          nextTask: 'Sign transfer orders & switch to subQ insulin',
+          nextTaskDue: 'Due 11:30 AM',
+          problems: [
+            { text: 'Diabetic Ketoacidosis (pH 7.34, AG 10)', status: 'Resolving', style: 'bg-[#E6F4EA] text-[#137333]' }
+          ],
+          timeline: [
+            { time: 'Today, 08:45 AM', author: 'Dr. Ankita', title: 'Rounds Note', text: 'Bicarbonate normalized. Tolerating soft diet.' }
+          ],
+          medications: [
+            { name: 'Insulin Regular IV', dose: '2 units/hr infusion', status: 'Active Order', style: 'bg-[#E6F4EA] text-[#137333]', notes: 'Converting to Glargine' }
+          ],
+          tasks: [
+            { id: 't3', title: 'Check capillary blood glucose & switch to Glargine', due: '11:30 AM', nurse: 'Sister Bindu', done: false, isOverdue: false }
+          ]
+        },
+        {
+          id: 'p3',
+          name: 'Meenakshi Sundaram',
+          ageSex: '68 F',
+          uhid: '89104',
+          ipId: 'IP-43990',
+          ward: 'Ward 4 • Female Med',
+          bed: '402-B',
+          bedStyle: 'bg-[#F3E8FD] text-[#7627BB] border-[#E9D2FD]',
+          role: 'referral',
+          roleLabel: 'Referral (Ortho)',
+          acuity: 'Post-Op Fever',
+          acuityStyle: 'bg-[#FEF7E0] text-[#B06000]',
+          daysAdmitted: 4,
+          transferNote: 'Consult requested by Orthopedics (Dr. Varma)',
+          nextTask: 'Follow up blood cultures with Microbiology',
+          nextTaskDue: 'Due 02:00 PM',
+          problems: [
+            { text: 'Fever Post Right Knee Replacement (POD 3)', status: 'Investigating', style: 'bg-[#FEF7E0] text-[#B06000]' }
+          ],
+          timeline: [
+            { time: 'Yesterday, 14:00 PM', author: 'Dr. Ankita', title: 'Referral Assessment', text: 'Started Piperacillin-Tazobactam. Blood c/s sent.' }
+          ],
+          medications: [
+            { name: 'Piperacillin-Tazobactam', dose: '4.5g IV Q8H', status: 'Active Order', style: 'bg-[#E6F4EA] text-[#137333]', notes: 'Empirical coverage' }
+          ],
+          tasks: [
+            { id: 't4', title: 'Check knee wound swab Gram stain', due: '14:00 PM', nurse: 'Sister Leena', done: false, isOverdue: false }
+          ]
+        }
+      ]
+    };
+
+    // Navigation Switcher
+    function navTo(screenName) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById('screen-' + screenName);
+      if (target) target.classList.remove('hidden');
+      appState.currentScreen = screenName;
+
+      // Update bottom nav pills
+      ['census', 'work', 'capture', 'inbox', 'handover'].forEach(name => {
+        const btn = document.getElementById('nav-' + name);
+        const pill = document.getElementById('pill-' + name);
+        const topBtn = document.getElementById('btn-top-' + name);
+
+        if (btn && pill) {
+          if (name === screenName) {
+            btn.classList.add('text-[#1A73E8]');
+            btn.classList.remove('hover:text-[#202124]');
+            pill.classList.add('bg-[#E8F0FE]');
+          } else {
+            navUnselect(btn, pill);
+          }
+        }
+        if (topBtn) {
+          if (name === screenName) {
+            topBtn.className = "px-3.5 py-1.5 rounded-full font-medium transition-all bg-[#1A73E8] text-white shadow-sm";
+          } else {
+            topBtn.className = "px-3.5 py-1.5 rounded-full font-medium transition-all text-[#444746] hover:bg-[#E8EAED]";
+          }
+        }
+      });
+
+      if (screenName === 'census') renderCensus();
+      if (screenName === 'work') renderQueue();
+      if (screenName === 'patient') renderPatientHub();
+    }
+
+    function navUnselect(btn, pill) {
+      btn.classList.remove('text-[#1A73E8]');
+      btn.classList.add('hover:text-[#202124]');
+      pill.classList.remove('bg-[#E8F0FE]');
+    }
+
+    // Census Filtering & Rendering
+    function setCensusFilter(filter) {
+      appState.censusFilter = filter;
+      ['primary', 'referral', 'oncall', 'discharged'].forEach(f => {
+        const el = document.getElementById('cfilter-' + f);
+        if (el) {
+          if (f === filter) {
+            el.className = "px-3 py-1 rounded-full text-[#1A73E8] bg-[#E8F0FE] font-semibold shrink-0 transition-all";
+          } else {
+            el.className = "px-3 py-1 rounded-full text-[#5F6368] hover:bg-[#F1F3F4] shrink-0 transition-all";
+          }
+        }
+      });
+      renderCensus();
+    }
+
+    function onSearchCensus(query) {
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (query.trim()) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      renderCensus(query.toLowerCase().trim());
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('census-search');
+      input.value = '';
+      document.getElementById('clear-search-btn').classList.add('hidden');
+      renderCensus();
+    }
+
+    function renderCensus(filterQuery = '') {
+      const container = document.getElementById('census-list-container');
+      if (!container) return;
+
+      let filtered = appState.patients.filter(p => {
+        if (appState.censusFilter === 'primary' && p.role !== 'primary') return false;
+        if (appState.censusFilter === 'referral' && p.role !== 'referral') return false;
+        if (appState.censusFilter === 'oncall' && p.role !== 'oncall') return false;
+        if (appState.censusFilter === 'discharged' && p.role !== 'discharged') return false;
+
+        if (filterQuery) {
+          const matchName = p.name.toLowerCase().includes(filterQuery);
+          const matchBed = p.bed.toLowerCase().includes(filterQuery);
+          const matchUhid = p.uhid.toLowerCase().includes(filterQuery);
+          const matchAcuity = p.acuity.toLowerCase().includes(filterQuery);
+          return matchName || matchBed || matchUhid || matchAcuity;
+        }
+        return true;
+      });
+
+      // Group by Ward
+      const wards = {};
+      filtered.forEach(p => {
+        if (!wards[p.ward]) wards[p.ward] = [];
+        wards[p.ward].push(p);
+      });
+
+      if (Object.keys(wards).length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-[#5F6368]">
+            <p class="text-xs">No patients found matching current filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      for (const [wardName, pList] of Object.entries(wards)) {
+        html += `
+          <div>
+            <div class="flex items-center justify-between px-1 mb-1.5">
+              <span class="text-[11px] font-bold text-[#1A73E8] uppercase tracking-wide flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#1A73E8]"></span>
+                ${wardName}
+              </span>
+              <span class="text-[10px] text-[#5F6368] font-medium">${pList.length} Patient(s)</span>
+            </div>
+        `;
+
+        pList.forEach(p => {
+          html += `
+            <div onclick="selectPatient('${p.id}')" class="bg-white border border-[#E0E2E6] hover:border-[#1A73E8]/60 rounded-2xl p-3.5 google-shadow-sm cursor-pointer transition-all active:scale-[0.99] mb-2.5">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-bold rounded-md border ${p.bedStyle}">${p.bed}</span>
+                  <h3 class="text-sm font-bold text-[#202124]">${p.name}</h3>
+                </div>
+                <span class="px-2 py-0.5 text-[10px] font-medium rounded-full ${p.acuityStyle}">
+                  ${p.acuity}
+                </span>
+              </div>
+              <div class="mt-1 flex items-center gap-2 text-[11px] text-[#5F6368]">
+                <span>${p.ageSex}</span> &bull; <span>UHID: ${p.uhid}</span> &bull; <span class="text-[#1A73E8] font-medium">Day ${p.daysAdmitted} Admitted</span>
+              </div>
+              <div class="mt-2.5 bg-[#F8F9FA] p-2 rounded-xl border border-[#E8EAED]">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-[#D93025] font-semibold flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    ${p.nextTaskDue}
+                  </span>
+                  <span class="text-[10px] text-[#5F6368]">${p.roleLabel}</span>
+                </div>
+                <p class="text-[11px] text-[#3C4043] mt-0.5">${p.nextTask}</p>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+      container.innerHTML = html;
+      updateHeaderCounts();
+    }
+
+    function selectPatient(patientId) {
+      appState.selectedPatientId = patientId;
+      navTo('patient');
+    }
+
+    function updateHeaderCounts() {
+      const primaryCount = appState.patients.filter(p => p.role === 'primary').length;
+      const referralCount = appState.patients.filter(p => p.role === 'referral').length;
+      document.getElementById('count-primary').textContent = primaryCount;
+      document.getElementById('count-referral').textContent = referralCount;
+      document.getElementById('census-count').textContent = appState.patients.length;
+
+      let totalTasks = 0;
+      appState.patients.forEach(p => {
+        totalTasks += p.tasks.filter(t => !t.done).length;
+      });
+      document.getElementById('total-pending-badge').textContent = totalTasks;
+      document.getElementById('queue-count').textContent = totalTasks;
+    }
+
+    // Rounds Queue Rendering
+    function setQueueFilter(mode) {
+      appState.queueFilter = mode;
+      ['ward', 'time', 'awaiting'].forEach(m => {
+        const el = document.getElementById('qfilter-' + m);
+        if (el) {
+          if (m === mode) {
+            el.className = "px-3.5 py-1 rounded-full text-[#1A73E8] bg-[#E8F0FE] font-semibold";
+          } else {
+            el.className = "px-3.5 py-1 rounded-full text-[#5F6368] hover:bg-[#F1F3F4]";
+          }
+        }
+      });
+      renderQueue();
+    }
+
+    function renderQueue() {
+      const container = document.getElementById('queue-list-container');
+      if (!container) return;
+
+      let html = '';
+      appState.patients.forEach(p => {
+        const openTasks = p.tasks.filter(t => !t.done);
+        if (openTasks.length === 0) return;
+
+        html += `
+          <div>
+            <div class="flex items-center justify-between mb-1.5 px-1">
+              <span class="text-xs font-bold text-[#1A73E8] flex items-center gap-1">
+                ${p.ward}
+              </span>
+              <span class="text-[10px] bg-[#E8F0FE] text-[#1A73E8] px-2 py-0.5 rounded-full font-medium">Floor Round</span>
+            </div>
+        `;
+
+        openTasks.forEach(t => {
+          const isOverdue = t.isOverdue;
+          html += `
+            <div class="bg-white ${isOverdue ? 'border-l-4 border-l-[#D93025]' : ''} border border-[#E0E2E6] rounded-2xl p-3.5 google-shadow-sm mb-2.5">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-xs font-bold ${p.bedStyle} rounded">${p.bed}</span>
+                  <span class="text-xs font-bold text-[#202124]">${p.name}</span>
+                </div>
+                <span class="text-[11px] font-bold ${isOverdue ? 'text-[#D93025]' : 'text-[#5F6368]'} flex items-center gap-1">
+                  ${isOverdue ? '<span class="w-1.5 h-1.5 rounded-full bg-[#D93025] animate-ping"></span>' : ''}
+                  ${t.due}
+                </span>
+              </div>
+              <p class="text-xs text-[#202124] mt-2 font-medium">${t.title}</p>
+              <p class="text-[11px] text-[#5F6368] mt-0.5">Assigned: ${t.nurse}</p>
+              
+              <div class="mt-3 pt-2.5 border-t border-[#F1F3F4] flex items-center justify-between gap-2">
+                <button onclick="markTaskDone('${p.id}', '${t.id}')" class="flex-1 py-1.5 bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-xs rounded-xl transition-all flex items-center justify-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  Done + Note
+                </button>
+                <button onclick="snoozeTask('${p.id}', '${t.id}')" class="px-3 py-1.5 bg-[#F1F3F4] hover:bg-[#E8EAED] text-[#444746] text-xs rounded-xl font-medium">+2h Snooze</button>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      });
+
+      if (!html) {
+        html = `
+          <div class="py-12 text-center text-[#5F6368]">
+            <p class="text-xs">All floor round tasks completed! 🎉</p>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+      updateHeaderCounts();
+    }
+
+    function markTaskDone(patientId, taskId) {
+      const p = appState.patients.find(x => x.id === patientId);
+      if (!p) return;
+      const t = p.tasks.find(x => x.id === taskId);
+      if (t) {
+        t.done = true;
+        // Append note to patient's timeline
+        p.timeline.unshift({
+          time: 'Just now',
+          author: 'Dr. Ankita',
+          title: 'Task Completed',
+          text: `Completed: ${t.title}`
+        });
+        showToast(`Marked Done: ${t.title}`);
+        renderQueue();
+        renderCensus();
+      }
+    }
+
+    function snoozeTask(patientId, taskId) {
+      const p = appState.patients.find(x => x.id === patientId);
+      if (!p) return;
+      const t = p.tasks.find(x => x.id === taskId);
+      if (t) {
+        t.due = 'Snoozed (+2h)';
+        t.isOverdue = false;
+        showToast(`Task snoozed for 2 hours`);
+        renderQueue();
+      }
+    }
+
+    // Patient Inpatient Hub Rendering
+    function renderPatientHub() {
+      const p = appState.patients.find(x => x.id === appState.selectedPatientId) || appState.patients[0];
+      
+      document.getElementById('hub-name').textContent = p.name;
+      document.getElementById('hub-uhid').textContent = `UHID: ${p.uhid} • ${p.ipId}`;
+      document.getElementById('hub-meta').textContent = `${p.ageSex} • ${p.roleLabel}: Dr. Ankita`;
+      document.getElementById('hub-bed').textContent = `${p.ward.split('•')[0]} • ${p.bed}`;
+      document.getElementById('hub-admitted').textContent = `Day ${p.daysAdmitted} Inpatient`;
+      document.getElementById('hub-transfer-info').textContent = p.transferNote;
+
+      // Problems list
+      const probContainer = document.getElementById('hub-problems-list');
+      probContainer.innerHTML = p.problems.map((prob, i) => `
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-semibold text-[#202124]">${i + 1}. ${prob.text}</span>
+          <span class="px-2 py-0.5 rounded-full font-medium text-[10px] ${prob.style}">${prob.status}</span>
+        </div>
+      `).join('');
+
+      // Timeline list
+      const timeContainer = document.getElementById('hub-timeline-list');
+      timeContainer.innerHTML = p.timeline.map(item => `
+        <div class="bg-white p-2.5 rounded-xl border border-[#E0E2E6] google-shadow-sm">
+          <span class="text-[10px] text-[#1A73E8] font-bold">${item.time} &bull; ${item.author}</span>
+          <p class="text-xs font-bold text-[#202124] mt-0.5">${item.title}</p>
+          <p class="text-[11px] text-[#5F6368] mt-0.5">${item.text}</p>
+        </div>
+      `).join('');
+      document.getElementById('hub-timeline-count').textContent = p.timeline.length;
+
+      // Meds list
+      const medsContainer = document.getElementById('hub-meds-list');
+      medsContainer.innerHTML = p.medications.map(m => `
+        <div class="bg-white p-3 rounded-xl border border-[#E0E2E6] google-shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-[#202124]">${m.name}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold ${m.style}">${m.status}</span>
+          </div>
+          <p class="text-xs text-[#3C4043] mt-0.5">${m.dose}</p>
+          <p class="text-[10px] text-[#5F6368] mt-0.5">${m.notes}</p>
+        </div>
+      `).join('');
+      document.getElementById('hub-meds-count').textContent = p.medications.length;
+
+      // Tasks list
+      const taskContainer = document.getElementById('hub-tasks-list');
+      taskContainer.innerHTML = p.tasks.map(t => `
+        <div class="bg-white p-3 rounded-xl border border-[#E0E2E6] google-shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-[#202124] ${t.done ? 'line-through text-[#5F6368]' : ''}">${t.title}</span>
+            <span class="text-[10px] text-[#5F6368] block">Due: ${t.due} &bull; ${t.nurse}</span>
+          </div>
+          ${t.done ? '<span class="text-xs text-[#137333] font-bold">&check; Done</span>' : `<button onclick="markTaskDone('${p.id}', '${t.id}')" class="px-2.5 py-1 bg-[#1A73E8] text-white text-xs font-medium rounded-lg">Done</button>`}
+        </div>
+      `).join('');
+      document.getElementById('hub-tasks-count').textContent = p.tasks.filter(t => !t.done).length;
+    }
+
+    function switchPatientTab(tabName) {
+      ['overview', 'timeline', 'meds', 'tasks', 'reports'].forEach(t => {
+        const c = document.getElementById('pcontent-' + t);
+        const b = document.getElementById('ptab-' + t);
+        if (c) c.classList.add('hidden');
+        if (b) {
+          b.classList.remove('text-[#1A73E8]', 'font-bold', 'border-b-2', 'border-[#1A73E8]');
+          b.classList.add('hover:text-[#202124]');
+        }
+      });
+      const activeC = document.getElementById('pcontent-' + tabName);
+      const activeB = document.getElementById('ptab-' + tabName);
+      if (activeC) activeC.classList.remove('hidden');
+      if (activeB) {
+        activeB.classList.add('text-[#1A73E8]', 'font-bold', 'border-b-2', 'border-[#1A73E8]');
+        activeB.classList.remove('hover:text-[#202124]');
+      }
+    }
+
+    // AI Gate Staging & Presets
+    function loadAiPreset(preset) {
+      const input = document.getElementById('ai-input-text');
+      if (preset === 'preset-icu') {
+        input.value = "Patient transferred to ICU Bed 04. Stop Ceftriaxone. Start Meropenem 1g IV TDS, adjust for creatinine. Check repeat potassium and urine output in 4 hours.";
+      } else if (preset === 'preset-nurse') {
+        input.value = "Sister Mary says Bed 04 BP dropping to 85/50. Give 500ml normal saline bolus, hold Norad weaning, repeat BP check in 30 minutes.";
+      }
+      showToast("Loaded clinical preset input");
+    }
+
+    function reparseAi() {
+      showToast("OpenRouter re-parsed clinical intent (4 actions)");
+    }
+
+    function commitAiChanges() {
+      const p = appState.patients[0]; // Rajesh Kumar
+      
+      // Execute checked mutations atomically into in-memory Care Model
+      if (document.getElementById('ai-chk-1').checked) {
+        p.bed = 'Bed 04';
+        p.ward = 'ICU • Floor 3';
+        p.transferNote = 'Transferred to ICU Bed 04 via AI Gate';
+        p.timeline.unshift({
+          time: 'Just now',
+          author: 'Dr. Ankita',
+          title: 'Physical Location Transfer: ICU Bed 04',
+          text: 'Verified room transfer committed to care_location_assignments.'
+        });
+      }
+
+      if (document.getElementById('ai-chk-2').checked) {
+        // Discontinue Ceftriaxone
+        p.timeline.unshift({
+          time: 'Just now',
+          author: 'Dr. Ankita',
+          title: 'Discontinue Order: Ceftriaxone',
+          text: 'Order closed. Reason: Antibiotic escalation.'
+        });
+      }
+
+      if (document.getElementById('ai-chk-3').checked) {
+        // Add Meropenem
+        p.medications.unshift({
+          name: 'Meropenem',
+          dose: '1g • IV • TDS (Every 8h)',
+          status: 'Active Order',
+          style: 'bg-[#E6F4EA] text-[#137333]',
+          notes: 'Renal-adjusted dose'
+        });
+      }
+
+      if (document.getElementById('ai-chk-4').checked) {
+        p.tasks.unshift({
+          id: 't_ai_' + Date.now(),
+          title: 'Check repeat potassium & urine output',
+          due: '12:30 PM (in 4h)',
+          nurse: 'Sister Priya',
+          done: false,
+          isOverdue: false
+        });
+      }
+
+      showToast("All 4 actions committed to SQLCipher with audit trail!");
+      selectPatient(p.id);
+    }
+
+    // Modal Control Helpers
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.add('hidden');
+    }
+
+    function handleAdmitSubmit(e) {
+      e.preventDefault();
+      const newP = {
+        id: 'p_' + Date.now(),
+        name: document.getElementById('admit-name').value,
+        ageSex: document.getElementById('admit-agesex').value,
+        uhid: document.getElementById('admit-uhid').value,
+        ipId: 'IP-' + Math.floor(10000 + Math.random() * 90000),
+        ward: document.getElementById('admit-ward').value,
+        bed: document.getElementById('admit-bed').value,
+        bedStyle: 'bg-[#F1F3F4] text-[#444746] border-[#DADCE0]',
+        role: 'primary',
+        roleLabel: 'Primary Team',
+        acuity: 'Newly Admitted',
+        acuityStyle: 'bg-[#FEF7E0] text-[#B06000]',
+        daysAdmitted: 1,
+        transferNote: 'Direct Inpatient Admission',
+        nextTask: 'Initial workup & vitals stabilization',
+        nextTaskDue: 'Due Today',
+        problems: [
+          { text: document.getElementById('admit-diag').value, status: 'Active', style: 'bg-[#FEF7E0] text-[#B06000]' }
+        ],
+        timeline: [
+          { time: 'Just now', author: 'Dr. Ankita', title: 'Inpatient Admission Opened', text: `Admitted to ${document.getElementById('admit-ward').value}` }
+        ],
+        medications: [],
+        tasks: [
+          { id: 't_init', title: 'Send baseline blood tests (CBC, LFT, KFT)', due: 'Immediate', nurse: 'Ward Nurse', done: false, isOverdue: false }
+        ]
+      };
+
+      appState.patients.unshift(newP);
+      closeModal('modal-admit');
+      showToast(`Admitted: ${newP.name} to ${newP.bed}`);
+      selectPatient(newP.id);
+    }
+
+    function executeTransfer() {
+      const p = appState.patients.find(x => x.id === appState.selectedPatientId);
+      if (!p) return;
+      const newWard = document.getElementById('transfer-dest-ward').value;
+      const newBed = document.getElementById('transfer-dest-bed').value;
+      const reason = document.getElementById('transfer-reason').value;
+
+      p.ward = newWard;
+      p.bed = newBed;
+      p.transferNote = `Moved to ${newBed} (${newWard}): ${reason}`;
+      p.timeline.unshift({
+        time: 'Just now',
+        author: 'Dr. Ankita',
+        title: `Bed Transfer: ${newBed}`,
+        text: `Transferred to ${newWard}. Reason: ${reason}`
+      });
+
+      closeModal('modal-transfer');
+      showToast(`Transferred to ${newBed}!`);
+      renderPatientHub();
+      renderCensus();
+    }
+
+    function saveRoundNote() {
+      const p = appState.patients.find(x => x.id === appState.selectedPatientId);
+      if (!p) return;
+      const obs = document.getElementById('round-note-text').value || 'Bedside examination completed. Vitals stable.';
+      const plan = document.getElementById('round-plan-text').value || 'Continue active treatment plan.';
+
+      p.timeline.unshift({
+        time: 'Today, 09:45 AM',
+        author: 'Dr. Ankita',
+        title: 'Bedside Round Note',
+        text: `${obs} Plan: ${plan}`
+      });
+
+      closeModal('modal-round-note');
+      showToast("Saved review to timeline!");
+      renderPatientHub();
+    }
+
+    function handleAddTaskSubmit(e) {
+      e.preventDefault();
+      const p = appState.patients.find(x => x.id === appState.selectedPatientId);
+      if (!p) return;
+      const title = document.getElementById('task-title').value;
+      const time = document.getElementById('task-time').value;
+      const nurse = document.getElementById('task-assigned').value;
+
+      p.tasks.unshift({
+        id: 't_' + Date.now(),
+        title: title,
+        due: time,
+        nurse: nurse,
+        done: false,
+        isOverdue: false
+      });
+
+      closeModal('modal-add-task');
+      showToast("Task added & scheduled!");
+      renderPatientHub();
+      renderQueue();
+    }
+
+    function viewReport(title, date, finding) {
+      document.getElementById('rep-modal-title').textContent = title;
+      document.getElementById('rep-modal-date').textContent = `Date: ${date}`;
+      document.getElementById('rep-modal-finding').textContent = finding;
+      openModal('modal-report-view');
+    }
+
+    function resolveIntake(num) {
+      showToast(`Linked intake #${num} to inpatient record!`);
+      const container = document.getElementById('inbox-list-container');
+      if (container.children.length > 1) {
+        container.children[num - 1].remove();
+        document.getElementById('inbox-count').textContent = container.children.length;
+      }
+    }
+
+    function copyHandoverWhatsApp() {
+      const text = `*MEDTRACK SHIFT HANDOVER*\nDr. Ankita -> Night Cross-Cover\n\n*HIGH ATTENTION:* ICU Bed 04 Rajesh Kumar (54M) - Severe Sepsis / AKI. Weaning Norad. Antibiotic: Meropenem. Check repeat ABG at 22:00.\n\n*STABLE:* Ward 4 Bed 402 Meenakshi (Ortho referral fever, Pip-Taz started).`;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Copied Handover to Clipboard for WhatsApp!");
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = message;
+      toast.classList.remove('-translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-24', 'opacity-0');
+      }, 2500);
+    }
+
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCensus();
+      renderQueue();
+      renderPatientHub();
+    });
+  </script>
+</body>
+</html>

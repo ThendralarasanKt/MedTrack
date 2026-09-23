@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "required": ["error"],
+  "properties": {
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "enum": [
+            "UNAUTHENTICATED",
+            "UNAUTHORIZED",
+            "UNPROVISIONED",
+            "UNSUPPORTED_SCHEMA",
+            "OVERSIZED_INPUT",
+            "QUOTA_EXCEEDED",
+            "CONFLICT",
+            "NOT_FOUND",
+            "VALIDATION",
+            "TRANSIENT_PROVIDER",
+            "CANCELLED",
+            "EXPIRED",
+            "UNSUPPORTED_COMMAND"
+          ]
+        },
+        "message": { "type": "string" }
+      }
+    }
+  }
+}

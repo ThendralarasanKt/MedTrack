@@ -1,0 +1,21 @@
+{
+  "id": "live-synthetic-v1",
+  "mode": "LIVE_SYNTHETIC",
+  "questionSetVersion": "intent-v1",
+  "routingPolicyVersion": "routing-v1",
+  "enabled": true,
+  "requiresOpenRouterKey": true,
+  "ceilings": {
+    "maxCallsPerCase": 2,
+    "maxCostUsd": 0.5
+  },
+  "freeGenerationFallbacks": [
+    "nvidia/nemotron-3-super-120b-a12b:free",
+    "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "qwen/qwen3.8-27b:free",
+    "google/gemma-4-31b-it:free",
+    "z-ai/glm-5.2:free",
+    "poolside/laguna-s-2.1:free"
+  ],
+  "notes": "Activate only with OPENROUTER_API_KEY and SYNTHETIC cases. Prefer :free pins; fallbacks are approved free-only slugs."
+}

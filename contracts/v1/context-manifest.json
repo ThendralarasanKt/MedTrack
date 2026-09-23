@@ -1,0 +1,29 @@
+{
+  "$id": "https://medtrack.local/contracts/v1/context-manifest.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["snapshotAt", "records", "missing"],
+  "properties": {
+    "snapshotAt": { "type": "string", "format": "date-time" },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "id", "version"],
+        "properties": {
+          "type": { "type": "string" },
+          "id": { "type": "string" },
+          "version": { "type": "integer", "minimum": 0 },
+          "sourceCapturedAt": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "missing": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "selectionScope": {
+      "enum": ["SINGLE_PATIENT", "EXPLICIT_CROSS_PATIENT", "UNRESOLVED_IDENTITY"]
+    }
+  }
+}

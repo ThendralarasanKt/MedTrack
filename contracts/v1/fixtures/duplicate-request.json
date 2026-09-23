@@ -1,0 +1,5 @@
+{
+  "note": "Same account + requestId + inputDigest returns the original job. Same requestId with a different digest returns CONFLICT.",
+  "duplicate": { "requestId": "req-dup-001", "inputDigest": "sha256:same" },
+  "conflict": { "requestId": "req-dup-001", "inputDigest": "sha256:other" }
+}

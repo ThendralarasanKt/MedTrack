@@ -1,0 +1,12 @@
+{
+  "proposalId": "prop-clarify-001",
+  "jobId": "job-clarify-001",
+  "requestId": "req-clarify-001",
+  "commandSchemaVersion": "care-commands-1",
+  "contextDigest": "sha256:cccccccccccccccccccccccccccccccc",
+  "identity": { "state": "UNRESOLVED", "patientId": null, "admissionId": null },
+  "summary": "No mutating operations. Patient identity is unresolved.",
+  "clarification": "Which patient should receive this transfer?",
+  "operations": [],
+  "provenance": { "routeVersion": "route-v1", "decisionModel": "mock-jev" }
+}

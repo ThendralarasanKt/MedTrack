@@ -1,0 +1,52 @@
+{
+  "proposalId": "prop-inconsistent-001",
+  "jobId": "job-inconsistent-001",
+  "requestId": "req-inconsistent-001",
+  "commandSchemaVersion": "care-commands-1",
+  "contextDigest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "identity": { "state": "RESOLVED", "patientId": "pat-001", "admissionId": "adm-001" },
+  "summary": "Order a STAT potassium and check potassium four hours later.",
+  "operations": [
+    {
+      "operationId": "op-stat-k",
+      "type": "ASSIGN_TASK",
+      "atomicGroupId": "g-labs",
+      "dependsOn": [],
+      "target": { "kind": "ADMISSION", "id": "adm-001" },
+      "fields": {
+        "admissionId": "adm-001",
+        "kind": "INVESTIGATION",
+        "priority": "STAT",
+        "title": "Potassium",
+        "clinicalFocus": "potassium"
+      }
+    },
+    {
+      "operationId": "op-later-k",
+      "type": "ASSIGN_TASK",
+      "atomicGroupId": "g-labs",
+      "dependsOn": [],
+      "target": { "kind": "ADMISSION", "id": "adm-001" },
+      "fields": {
+        "admissionId": "adm-001",
+        "kind": "INVESTIGATION",
+        "priority": "ROUTINE",
+        "title": "Check potassium",
+        "clinicalFocus": "potassium"
+      },
+      "effectiveTime": {
+        "precision": "INSTANT",
+        "relative": {
+          "amount": 4,
+          "unit": "HOURS",
+          "anchor": "2026-09-20T08:00:00+05:30",
+          "resolvedAt": "2026-09-20T12:00:00+05:30",
+          "zoneId": "Asia/Kolkata"
+        },
+        "at": "2026-09-20T12:00:00+05:30",
+        "zoneId": "Asia/Kolkata"
+      }
+    }
+  ],
+  "provenance": { "routeVersion": "route-v1" }
+}

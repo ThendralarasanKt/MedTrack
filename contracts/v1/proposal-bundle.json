@@ -1,0 +1,81 @@
+{
+  "$id": "https://medtrack.local/contracts/v1/proposal-bundle.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "proposalId",
+    "jobId",
+    "requestId",
+    "commandSchemaVersion",
+    "contextDigest",
+    "identity",
+    "summary",
+    "operations",
+    "provenance"
+  ],
+  "properties": {
+    "proposalId": { "type": "string" },
+    "jobId": { "type": "string" },
+    "requestId": { "type": "string" },
+    "commandSchemaVersion": { "const": "care-commands-1" },
+    "contextDigest": { "type": "string" },
+    "identity": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": { "enum": ["RESOLVED", "UNRESOLVED"] },
+        "patientId": { "type": ["string", "null"] },
+        "admissionId": { "type": ["string", "null"] }
+      }
+    },
+    "summary": { "type": "string" },
+    "clarification": { "type": ["string", "null"] },
+    "operations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/operation" }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["routeVersion"],
+      "properties": {
+        "routeVersion": { "type": "string" },
+        "decisionModel": { "type": ["string", "null"] },
+        "generationModel": { "type": ["string", "null"] },
+        "promptVersion": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "$defs": {
+    "operation": {
+      "type": "object",
+      "required": ["operationId", "type", "target", "fields"],
+      "properties": {
+        "operationId": { "type": "string" },
+        "type": { "type": "string" },
+        "atomicGroupId": { "type": ["string", "null"] },
+        "dependsOn": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": { "type": "string" },
+            "id": { "type": ["string", "null"] },
+            "expectedVersion": { "type": ["integer", "null"] },
+            "displayHint": { "type": ["string", "null"] }
+          }
+        },
+        "fields": { "type": "object" },
+        "effectiveTime": { "type": ["object", "null"] },
+        "evidence": { "type": "array" },
+        "unresolvedFields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "attribution": { "type": ["object", "null"] }
+      }
+    }
+  }
+}

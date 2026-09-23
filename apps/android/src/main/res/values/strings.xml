@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MedTrack</string>
+    <string name="reminder_title">MedTrack reminder</string>
+    <string name="reminder_body">Open MedTrack to review pending work.</string>
+    <string name="reminder_complete">Complete</string>
+    <string name="reminder_add_note">Add note</string>
+</resources>

@@ -1,0 +1,90 @@
+[
+  {
+    "id": "case-bed-transfer",
+    "title": "Bed transfer to ICU 04",
+    "dataClassification": "SYNTHETIC",
+    "sourceType": "DOCTOR_NOTE",
+    "fixtureTag": "success",
+    "inputText": "Transfer Mrs Synthetic to ICU Bed 04 (loc-icu-04). Stop Ceftriaxone.",
+    "labels": ["transfer", "medication"],
+    "context": {
+      "patientId": "pat-001",
+      "admissionId": "adm-001",
+      "displayName": "Mrs Synthetic",
+      "locationLabel": "Bed 402",
+      "purpose": "SINGLE_PATIENT_CAPTURE",
+      "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "id": "case-med-change",
+    "title": "Medication stop (partial fixture)",
+    "dataClassification": "SYNTHETIC",
+    "sourceType": "DOCTOR_NOTE",
+    "fixtureTag": "partial-input",
+    "inputText": "Hold Lasix for now — dose unclear in the note.",
+    "labels": ["medication", "partial"],
+    "context": {
+      "patientId": "pat-001",
+      "admissionId": "adm-001",
+      "displayName": "Mrs Synthetic",
+      "purpose": "SINGLE_PATIENT_CAPTURE",
+      "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "id": "case-clarification",
+    "title": "Unresolved identity clarification",
+    "dataClassification": "SYNTHETIC",
+    "sourceType": "NURSE_MESSAGE",
+    "fixtureTag": "clarification",
+    "inputText": "Please review the patient in bed 4 — BP still high.",
+    "labels": ["clarification", "identity"],
+    "context": {
+      "purpose": "SINGLE_PATIENT_CAPTURE",
+      "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "id": "case-multi-patient",
+    "title": "Multiple patients in one note",
+    "dataClassification": "SYNTHETIC",
+    "sourceType": "DOCTOR_NOTE",
+    "fixtureTag": null,
+    "inputText": "Bed 402 creatinine rising; bed 518 ready for discharge planning — and check ICU bed 12 potassium.",
+    "labels": ["multi-patient"],
+    "context": {
+      "purpose": "SINGLE_PATIENT_CAPTURE",
+      "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "id": "case-report-note",
+    "title": "Report reviewed note",
+    "dataClassification": "SYNTHETIC",
+    "sourceType": "REPORT_NOTE",
+    "fixtureTag": "success",
+    "inputText": "CXR report reviewed — no new consolidation. Continue current antibiotics. Transfer to ICU Bed 04 (loc-icu-04) if saturations drop. Stop Ceftriaxone if culture negative.",
+    "labels": ["report", "transfer"],
+    "context": {
+      "patientId": "pat-001",
+      "admissionId": "adm-001",
+      "displayName": "Mrs Synthetic",
+      "purpose": "SINGLE_PATIENT_CAPTURE",
+      "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  {
+    "id": "case-handover",
+    "title": "Handover summary request",
+    "dataClassification": "SYNTHETIC",
+    "sourceType": "HANDOVER",
+    "fixtureTag": "clarification",
+    "inputText": "Summarize overnight events for the ward round — who is sickest?",
+    "labels": ["handover", "summary"],
+    "context": {
+      "purpose": "SINGLE_PATIENT_CAPTURE",
+      "contextDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  }
+]
